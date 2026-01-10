@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.2
-// source: proto/agent.proto
+// source: proto/agent/agent.proto
 
 package agent
 
@@ -66,11 +66,11 @@ func (x CommandType) String() string {
 }
 
 func (CommandType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_agent_proto_enumTypes[0].Descriptor()
+	return file_proto_agent_agent_proto_enumTypes[0].Descriptor()
 }
 
 func (CommandType) Type() protoreflect.EnumType {
-	return &file_proto_agent_proto_enumTypes[0]
+	return &file_proto_agent_agent_proto_enumTypes[0]
 }
 
 func (x CommandType) Number() protoreflect.EnumNumber {
@@ -79,7 +79,7 @@ func (x CommandType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CommandType.Descriptor instead.
 func (CommandType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{0}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{0}
 }
 
 type CommandStatus int32
@@ -127,11 +127,11 @@ func (x CommandStatus) String() string {
 }
 
 func (CommandStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_agent_proto_enumTypes[1].Descriptor()
+	return file_proto_agent_agent_proto_enumTypes[1].Descriptor()
 }
 
 func (CommandStatus) Type() protoreflect.EnumType {
-	return &file_proto_agent_proto_enumTypes[1]
+	return &file_proto_agent_agent_proto_enumTypes[1]
 }
 
 func (x CommandStatus) Number() protoreflect.EnumNumber {
@@ -140,7 +140,7 @@ func (x CommandStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CommandStatus.Descriptor instead.
 func (CommandStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{1}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{1}
 }
 
 type LogLevel int32
@@ -182,11 +182,11 @@ func (x LogLevel) String() string {
 }
 
 func (LogLevel) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_agent_proto_enumTypes[2].Descriptor()
+	return file_proto_agent_agent_proto_enumTypes[2].Descriptor()
 }
 
 func (LogLevel) Type() protoreflect.EnumType {
-	return &file_proto_agent_proto_enumTypes[2]
+	return &file_proto_agent_agent_proto_enumTypes[2]
 }
 
 func (x LogLevel) Number() protoreflect.EnumNumber {
@@ -195,7 +195,7 @@ func (x LogLevel) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use LogLevel.Descriptor instead.
 func (LogLevel) EnumDescriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{2}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{2}
 }
 
 type AgentStatus int32
@@ -234,11 +234,11 @@ func (x AgentStatus) String() string {
 }
 
 func (AgentStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_agent_proto_enumTypes[3].Descriptor()
+	return file_proto_agent_agent_proto_enumTypes[3].Descriptor()
 }
 
 func (AgentStatus) Type() protoreflect.EnumType {
-	return &file_proto_agent_proto_enumTypes[3]
+	return &file_proto_agent_agent_proto_enumTypes[3]
 }
 
 func (x AgentStatus) Number() protoreflect.EnumNumber {
@@ -247,7 +247,7 @@ func (x AgentStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AgentStatus.Descriptor instead.
 func (AgentStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{3}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{3}
 }
 
 type RegisterRequest struct {
@@ -266,7 +266,7 @@ type RegisterRequest struct {
 
 func (x *RegisterRequest) Reset() {
 	*x = RegisterRequest{}
-	mi := &file_proto_agent_proto_msgTypes[0]
+	mi := &file_proto_agent_agent_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -278,7 +278,7 @@ func (x *RegisterRequest) String() string {
 func (*RegisterRequest) ProtoMessage() {}
 
 func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[0]
+	mi := &file_proto_agent_agent_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -291,7 +291,7 @@ func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
 func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{0}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *RegisterRequest) GetAgentId() string {
@@ -362,7 +362,7 @@ type RegisterResponse struct {
 
 func (x *RegisterResponse) Reset() {
 	*x = RegisterResponse{}
-	mi := &file_proto_agent_proto_msgTypes[1]
+	mi := &file_proto_agent_agent_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -374,7 +374,7 @@ func (x *RegisterResponse) String() string {
 func (*RegisterResponse) ProtoMessage() {}
 
 func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[1]
+	mi := &file_proto_agent_agent_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -387,7 +387,7 @@ func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
 func (*RegisterResponse) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{1}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *RegisterResponse) GetSuccess() bool {
@@ -433,7 +433,7 @@ type Command struct {
 
 func (x *Command) Reset() {
 	*x = Command{}
-	mi := &file_proto_agent_proto_msgTypes[2]
+	mi := &file_proto_agent_agent_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -445,7 +445,7 @@ func (x *Command) String() string {
 func (*Command) ProtoMessage() {}
 
 func (x *Command) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[2]
+	mi := &file_proto_agent_agent_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -458,7 +458,7 @@ func (x *Command) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Command.ProtoReflect.Descriptor instead.
 func (*Command) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{2}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Command) GetId() string {
@@ -525,7 +525,7 @@ type CommandResponse struct {
 
 func (x *CommandResponse) Reset() {
 	*x = CommandResponse{}
-	mi := &file_proto_agent_proto_msgTypes[3]
+	mi := &file_proto_agent_agent_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -537,7 +537,7 @@ func (x *CommandResponse) String() string {
 func (*CommandResponse) ProtoMessage() {}
 
 func (x *CommandResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[3]
+	mi := &file_proto_agent_agent_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -550,7 +550,7 @@ func (x *CommandResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandResponse.ProtoReflect.Descriptor instead.
 func (*CommandResponse) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{3}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CommandResponse) GetCommandId() string {
@@ -614,24 +614,38 @@ type MetricsData struct {
 	MemoryUsed      uint64  `protobuf:"varint,6,opt,name=memory_used,json=memoryUsed,proto3" json:"memory_used,omitempty"`    // Used RAM in bytes
 	MemoryAvailable uint64  `protobuf:"varint,7,opt,name=memory_available,json=memoryAvailable,proto3" json:"memory_available,omitempty"`
 	MemoryPercent   float64 `protobuf:"fixed64,8,opt,name=memory_percent,json=memoryPercent,proto3" json:"memory_percent,omitempty"`
+	MemoryCached    uint64  `protobuf:"varint,16,opt,name=memory_cached,json=memoryCached,proto3" json:"memory_cached,omitempty"`
+	MemoryBuffers   uint64  `protobuf:"varint,17,opt,name=memory_buffers,json=memoryBuffers,proto3" json:"memory_buffers,omitempty"`
+	SwapTotal       uint64  `protobuf:"varint,18,opt,name=swap_total,json=swapTotal,proto3" json:"swap_total,omitempty"`
+	SwapUsed        uint64  `protobuf:"varint,19,opt,name=swap_used,json=swapUsed,proto3" json:"swap_used,omitempty"`
+	SwapFree        uint64  `protobuf:"varint,20,opt,name=swap_free,json=swapFree,proto3" json:"swap_free,omitempty"`
+	SwapPercent     float64 `protobuf:"fixed64,21,opt,name=swap_percent,json=swapPercent,proto3" json:"swap_percent,omitempty"`
 	// Disk
-	Disks []*DiskMetrics `protobuf:"bytes,9,rep,name=disks,proto3" json:"disks,omitempty"`
+	Disks  []*DiskMetrics `protobuf:"bytes,9,rep,name=disks,proto3" json:"disks,omitempty"`
+	DiskIo []*DiskIO      `protobuf:"bytes,22,rep,name=disk_io,json=diskIo,proto3" json:"disk_io,omitempty"`
 	// Network
 	NetworkBytesSent uint64 `protobuf:"varint,10,opt,name=network_bytes_sent,json=networkBytesSent,proto3" json:"network_bytes_sent,omitempty"`
 	NetworkBytesRecv uint64 `protobuf:"varint,11,opt,name=network_bytes_recv,json=networkBytesRecv,proto3" json:"network_bytes_recv,omitempty"`
+	Connections      uint64 `protobuf:"varint,23,opt,name=connections,proto3" json:"connections,omitempty"`
 	// Load average (Linux)
 	Load_1  float64 `protobuf:"fixed64,12,opt,name=load_1,json=load1,proto3" json:"load_1,omitempty"`
 	Load_5  float64 `protobuf:"fixed64,13,opt,name=load_5,json=load5,proto3" json:"load_5,omitempty"`
 	Load_15 float64 `protobuf:"fixed64,14,opt,name=load_15,json=load15,proto3" json:"load_15,omitempty"`
-	// Uptime
-	UptimeSeconds uint64 `protobuf:"varint,15,opt,name=uptime_seconds,json=uptimeSeconds,proto3" json:"uptime_seconds,omitempty"`
+	// Uptime & Host
+	UptimeSeconds uint64    `protobuf:"varint,15,opt,name=uptime_seconds,json=uptimeSeconds,proto3" json:"uptime_seconds,omitempty"`
+	HostInfo      *HostInfo `protobuf:"bytes,24,opt,name=host_info,json=hostInfo,proto3" json:"host_info,omitempty"`
+	// Services & Containers
+	Services   []*ServiceInfo   `protobuf:"bytes,25,rep,name=services,proto3" json:"services,omitempty"`
+	Containers []*ContainerInfo `protobuf:"bytes,26,rep,name=containers,proto3" json:"containers,omitempty"`
+	// Firewall
+	Firewall      *FirewallInfo `protobuf:"bytes,27,opt,name=firewall,proto3" json:"firewall,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *MetricsData) Reset() {
 	*x = MetricsData{}
-	mi := &file_proto_agent_proto_msgTypes[4]
+	mi := &file_proto_agent_agent_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -643,7 +657,7 @@ func (x *MetricsData) String() string {
 func (*MetricsData) ProtoMessage() {}
 
 func (x *MetricsData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[4]
+	mi := &file_proto_agent_agent_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -656,7 +670,7 @@ func (x *MetricsData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetricsData.ProtoReflect.Descriptor instead.
 func (*MetricsData) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{4}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *MetricsData) GetAgentId() string {
@@ -715,9 +729,58 @@ func (x *MetricsData) GetMemoryPercent() float64 {
 	return 0
 }
 
+func (x *MetricsData) GetMemoryCached() uint64 {
+	if x != nil {
+		return x.MemoryCached
+	}
+	return 0
+}
+
+func (x *MetricsData) GetMemoryBuffers() uint64 {
+	if x != nil {
+		return x.MemoryBuffers
+	}
+	return 0
+}
+
+func (x *MetricsData) GetSwapTotal() uint64 {
+	if x != nil {
+		return x.SwapTotal
+	}
+	return 0
+}
+
+func (x *MetricsData) GetSwapUsed() uint64 {
+	if x != nil {
+		return x.SwapUsed
+	}
+	return 0
+}
+
+func (x *MetricsData) GetSwapFree() uint64 {
+	if x != nil {
+		return x.SwapFree
+	}
+	return 0
+}
+
+func (x *MetricsData) GetSwapPercent() float64 {
+	if x != nil {
+		return x.SwapPercent
+	}
+	return 0
+}
+
 func (x *MetricsData) GetDisks() []*DiskMetrics {
 	if x != nil {
 		return x.Disks
+	}
+	return nil
+}
+
+func (x *MetricsData) GetDiskIo() []*DiskIO {
+	if x != nil {
+		return x.DiskIo
 	}
 	return nil
 }
@@ -732,6 +795,13 @@ func (x *MetricsData) GetNetworkBytesSent() uint64 {
 func (x *MetricsData) GetNetworkBytesRecv() uint64 {
 	if x != nil {
 		return x.NetworkBytesRecv
+	}
+	return 0
+}
+
+func (x *MetricsData) GetConnections() uint64 {
+	if x != nil {
+		return x.Connections
 	}
 	return 0
 }
@@ -764,6 +834,170 @@ func (x *MetricsData) GetUptimeSeconds() uint64 {
 	return 0
 }
 
+func (x *MetricsData) GetHostInfo() *HostInfo {
+	if x != nil {
+		return x.HostInfo
+	}
+	return nil
+}
+
+func (x *MetricsData) GetServices() []*ServiceInfo {
+	if x != nil {
+		return x.Services
+	}
+	return nil
+}
+
+func (x *MetricsData) GetContainers() []*ContainerInfo {
+	if x != nil {
+		return x.Containers
+	}
+	return nil
+}
+
+func (x *MetricsData) GetFirewall() *FirewallInfo {
+	if x != nil {
+		return x.Firewall
+	}
+	return nil
+}
+
+type FirewallInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"` // "active", "inactive"
+	Rules         []*FirewallRule        `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FirewallInfo) Reset() {
+	*x = FirewallInfo{}
+	mi := &file_proto_agent_agent_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FirewallInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FirewallInfo) ProtoMessage() {}
+
+func (x *FirewallInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_agent_agent_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FirewallInfo.ProtoReflect.Descriptor instead.
+func (*FirewallInfo) Descriptor() ([]byte, []int) {
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *FirewallInfo) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *FirewallInfo) GetRules() []*FirewallRule {
+	if x != nil {
+		return x.Rules
+	}
+	return nil
+}
+
+type FirewallRule struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Index         string                 `protobuf:"bytes,1,opt,name=index,proto3" json:"index,omitempty"`
+	To            string                 `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
+	Action        string                 `protobuf:"bytes,3,opt,name=action,proto3" json:"action,omitempty"`
+	From          string                 `protobuf:"bytes,4,opt,name=from,proto3" json:"from,omitempty"`
+	Comment       string                 `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
+	Protocol      string                 `protobuf:"bytes,6,opt,name=protocol,proto3" json:"protocol,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FirewallRule) Reset() {
+	*x = FirewallRule{}
+	mi := &file_proto_agent_agent_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FirewallRule) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FirewallRule) ProtoMessage() {}
+
+func (x *FirewallRule) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_agent_agent_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FirewallRule.ProtoReflect.Descriptor instead.
+func (*FirewallRule) Descriptor() ([]byte, []int) {
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *FirewallRule) GetIndex() string {
+	if x != nil {
+		return x.Index
+	}
+	return ""
+}
+
+func (x *FirewallRule) GetTo() string {
+	if x != nil {
+		return x.To
+	}
+	return ""
+}
+
+func (x *FirewallRule) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+func (x *FirewallRule) GetFrom() string {
+	if x != nil {
+		return x.From
+	}
+	return ""
+}
+
+func (x *FirewallRule) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+func (x *FirewallRule) GetProtocol() string {
+	if x != nil {
+		return x.Protocol
+	}
+	return ""
+}
+
 type DiskMetrics struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	MountPoint    string                 `protobuf:"bytes,1,opt,name=mount_point,json=mountPoint,proto3" json:"mount_point,omitempty"`
@@ -772,13 +1006,17 @@ type DiskMetrics struct {
 	Used          uint64                 `protobuf:"varint,4,opt,name=used,proto3" json:"used,omitempty"`
 	Free          uint64                 `protobuf:"varint,5,opt,name=free,proto3" json:"free,omitempty"`
 	Percent       float64                `protobuf:"fixed64,6,opt,name=percent,proto3" json:"percent,omitempty"`
+	Fstype        string                 `protobuf:"bytes,7,opt,name=fstype,proto3" json:"fstype,omitempty"`
+	InodesTotal   uint64                 `protobuf:"varint,8,opt,name=inodes_total,json=inodesTotal,proto3" json:"inodes_total,omitempty"`
+	InodesUsed    uint64                 `protobuf:"varint,9,opt,name=inodes_used,json=inodesUsed,proto3" json:"inodes_used,omitempty"`
+	InodesPercent float64                `protobuf:"fixed64,10,opt,name=inodes_percent,json=inodesPercent,proto3" json:"inodes_percent,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DiskMetrics) Reset() {
 	*x = DiskMetrics{}
-	mi := &file_proto_agent_proto_msgTypes[5]
+	mi := &file_proto_agent_agent_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -790,7 +1028,7 @@ func (x *DiskMetrics) String() string {
 func (*DiskMetrics) ProtoMessage() {}
 
 func (x *DiskMetrics) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[5]
+	mi := &file_proto_agent_agent_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -803,7 +1041,7 @@ func (x *DiskMetrics) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DiskMetrics.ProtoReflect.Descriptor instead.
 func (*DiskMetrics) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{5}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DiskMetrics) GetMountPoint() string {
@@ -848,6 +1086,386 @@ func (x *DiskMetrics) GetPercent() float64 {
 	return 0
 }
 
+func (x *DiskMetrics) GetFstype() string {
+	if x != nil {
+		return x.Fstype
+	}
+	return ""
+}
+
+func (x *DiskMetrics) GetInodesTotal() uint64 {
+	if x != nil {
+		return x.InodesTotal
+	}
+	return 0
+}
+
+func (x *DiskMetrics) GetInodesUsed() uint64 {
+	if x != nil {
+		return x.InodesUsed
+	}
+	return 0
+}
+
+func (x *DiskMetrics) GetInodesPercent() float64 {
+	if x != nil {
+		return x.InodesPercent
+	}
+	return 0
+}
+
+type DiskIO struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"` // device name
+	ReadCount     uint64                 `protobuf:"varint,2,opt,name=read_count,json=readCount,proto3" json:"read_count,omitempty"`
+	WriteCount    uint64                 `protobuf:"varint,3,opt,name=write_count,json=writeCount,proto3" json:"write_count,omitempty"`
+	ReadBytes     uint64                 `protobuf:"varint,4,opt,name=read_bytes,json=readBytes,proto3" json:"read_bytes,omitempty"`
+	WriteBytes    uint64                 `protobuf:"varint,5,opt,name=write_bytes,json=writeBytes,proto3" json:"write_bytes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DiskIO) Reset() {
+	*x = DiskIO{}
+	mi := &file_proto_agent_agent_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DiskIO) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DiskIO) ProtoMessage() {}
+
+func (x *DiskIO) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_agent_agent_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DiskIO.ProtoReflect.Descriptor instead.
+func (*DiskIO) Descriptor() ([]byte, []int) {
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DiskIO) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *DiskIO) GetReadCount() uint64 {
+	if x != nil {
+		return x.ReadCount
+	}
+	return 0
+}
+
+func (x *DiskIO) GetWriteCount() uint64 {
+	if x != nil {
+		return x.WriteCount
+	}
+	return 0
+}
+
+func (x *DiskIO) GetReadBytes() uint64 {
+	if x != nil {
+		return x.ReadBytes
+	}
+	return 0
+}
+
+func (x *DiskIO) GetWriteBytes() uint64 {
+	if x != nil {
+		return x.WriteBytes
+	}
+	return 0
+}
+
+type HostInfo struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Hostname             string                 `protobuf:"bytes,1,opt,name=hostname,proto3" json:"hostname,omitempty"`
+	Os                   string                 `protobuf:"bytes,2,opt,name=os,proto3" json:"os,omitempty"`
+	Platform             string                 `protobuf:"bytes,3,opt,name=platform,proto3" json:"platform,omitempty"`
+	PlatformFamily       string                 `protobuf:"bytes,4,opt,name=platform_family,json=platformFamily,proto3" json:"platform_family,omitempty"`
+	PlatformVersion      string                 `protobuf:"bytes,5,opt,name=platform_version,json=platformVersion,proto3" json:"platform_version,omitempty"`
+	KernelVersion        string                 `protobuf:"bytes,6,opt,name=kernel_version,json=kernelVersion,proto3" json:"kernel_version,omitempty"`
+	KernelArch           string                 `protobuf:"bytes,7,opt,name=kernel_arch,json=kernelArch,proto3" json:"kernel_arch,omitempty"`
+	BootTime             uint64                 `protobuf:"varint,8,opt,name=boot_time,json=bootTime,proto3" json:"boot_time,omitempty"`
+	VirtualizationSystem string                 `protobuf:"bytes,9,opt,name=virtualization_system,json=virtualizationSystem,proto3" json:"virtualization_system,omitempty"`
+	VirtualizationRole   string                 `protobuf:"bytes,10,opt,name=virtualization_role,json=virtualizationRole,proto3" json:"virtualization_role,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *HostInfo) Reset() {
+	*x = HostInfo{}
+	mi := &file_proto_agent_agent_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HostInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HostInfo) ProtoMessage() {}
+
+func (x *HostInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_agent_agent_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HostInfo.ProtoReflect.Descriptor instead.
+func (*HostInfo) Descriptor() ([]byte, []int) {
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *HostInfo) GetHostname() string {
+	if x != nil {
+		return x.Hostname
+	}
+	return ""
+}
+
+func (x *HostInfo) GetOs() string {
+	if x != nil {
+		return x.Os
+	}
+	return ""
+}
+
+func (x *HostInfo) GetPlatform() string {
+	if x != nil {
+		return x.Platform
+	}
+	return ""
+}
+
+func (x *HostInfo) GetPlatformFamily() string {
+	if x != nil {
+		return x.PlatformFamily
+	}
+	return ""
+}
+
+func (x *HostInfo) GetPlatformVersion() string {
+	if x != nil {
+		return x.PlatformVersion
+	}
+	return ""
+}
+
+func (x *HostInfo) GetKernelVersion() string {
+	if x != nil {
+		return x.KernelVersion
+	}
+	return ""
+}
+
+func (x *HostInfo) GetKernelArch() string {
+	if x != nil {
+		return x.KernelArch
+	}
+	return ""
+}
+
+func (x *HostInfo) GetBootTime() uint64 {
+	if x != nil {
+		return x.BootTime
+	}
+	return 0
+}
+
+func (x *HostInfo) GetVirtualizationSystem() string {
+	if x != nil {
+		return x.VirtualizationSystem
+	}
+	return ""
+}
+
+func (x *HostInfo) GetVirtualizationRole() string {
+	if x != nil {
+		return x.VirtualizationRole
+	}
+	return ""
+}
+
+type ServiceInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"` // "running", "stopped", "unknown"
+	Restarts      int32                  `protobuf:"varint,3,opt,name=restarts,proto3" json:"restarts,omitempty"`
+	LastRestart   string                 `protobuf:"bytes,4,opt,name=last_restart,json=lastRestart,proto3" json:"last_restart,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServiceInfo) Reset() {
+	*x = ServiceInfo{}
+	mi := &file_proto_agent_agent_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServiceInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServiceInfo) ProtoMessage() {}
+
+func (x *ServiceInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_agent_agent_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServiceInfo.ProtoReflect.Descriptor instead.
+func (*ServiceInfo) Descriptor() ([]byte, []int) {
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ServiceInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ServiceInfo) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ServiceInfo) GetRestarts() int32 {
+	if x != nil {
+		return x.Restarts
+	}
+	return 0
+}
+
+func (x *ServiceInfo) GetLastRestart() string {
+	if x != nil {
+		return x.LastRestart
+	}
+	return ""
+}
+
+type ContainerInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Image         string                 `protobuf:"bytes,3,opt,name=image,proto3" json:"image,omitempty"`
+	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"` // "running", "exited", "paused"
+	Health        string                 `protobuf:"bytes,5,opt,name=health,proto3" json:"health,omitempty"` // "healthy", "unhealthy", "none"
+	Restarts      int32                  `protobuf:"varint,6,opt,name=restarts,proto3" json:"restarts,omitempty"`
+	StartedAt     string                 `protobuf:"bytes,7,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ContainerInfo) Reset() {
+	*x = ContainerInfo{}
+	mi := &file_proto_agent_agent_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ContainerInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ContainerInfo) ProtoMessage() {}
+
+func (x *ContainerInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_agent_agent_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ContainerInfo.ProtoReflect.Descriptor instead.
+func (*ContainerInfo) Descriptor() ([]byte, []int) {
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ContainerInfo) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ContainerInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ContainerInfo) GetImage() string {
+	if x != nil {
+		return x.Image
+	}
+	return ""
+}
+
+func (x *ContainerInfo) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ContainerInfo) GetHealth() string {
+	if x != nil {
+		return x.Health
+	}
+	return ""
+}
+
+func (x *ContainerInfo) GetRestarts() int32 {
+	if x != nil {
+		return x.Restarts
+	}
+	return 0
+}
+
+func (x *ContainerInfo) GetStartedAt() string {
+	if x != nil {
+		return x.StartedAt
+	}
+	return ""
+}
+
 type MetricsAck struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Received      bool                   `protobuf:"varint,1,opt,name=received,proto3" json:"received,omitempty"`
@@ -857,7 +1475,7 @@ type MetricsAck struct {
 
 func (x *MetricsAck) Reset() {
 	*x = MetricsAck{}
-	mi := &file_proto_agent_proto_msgTypes[6]
+	mi := &file_proto_agent_agent_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -869,7 +1487,7 @@ func (x *MetricsAck) String() string {
 func (*MetricsAck) ProtoMessage() {}
 
 func (x *MetricsAck) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[6]
+	mi := &file_proto_agent_agent_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -882,7 +1500,7 @@ func (x *MetricsAck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetricsAck.ProtoReflect.Descriptor instead.
 func (*MetricsAck) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{6}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *MetricsAck) GetReceived() bool {
@@ -906,7 +1524,7 @@ type LogEntry struct {
 
 func (x *LogEntry) Reset() {
 	*x = LogEntry{}
-	mi := &file_proto_agent_proto_msgTypes[7]
+	mi := &file_proto_agent_agent_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -918,7 +1536,7 @@ func (x *LogEntry) String() string {
 func (*LogEntry) ProtoMessage() {}
 
 func (x *LogEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[7]
+	mi := &file_proto_agent_agent_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -931,7 +1549,7 @@ func (x *LogEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogEntry.ProtoReflect.Descriptor instead.
 func (*LogEntry) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{7}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *LogEntry) GetAgentId() string {
@@ -985,7 +1603,7 @@ type LogAck struct {
 
 func (x *LogAck) Reset() {
 	*x = LogAck{}
-	mi := &file_proto_agent_proto_msgTypes[8]
+	mi := &file_proto_agent_agent_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -997,7 +1615,7 @@ func (x *LogAck) String() string {
 func (*LogAck) ProtoMessage() {}
 
 func (x *LogAck) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[8]
+	mi := &file_proto_agent_agent_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1010,7 +1628,7 @@ func (x *LogAck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogAck.ProtoReflect.Descriptor instead.
 func (*LogAck) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{8}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *LogAck) GetReceived() bool {
@@ -1031,7 +1649,7 @@ type HeartbeatRequest struct {
 
 func (x *HeartbeatRequest) Reset() {
 	*x = HeartbeatRequest{}
-	mi := &file_proto_agent_proto_msgTypes[9]
+	mi := &file_proto_agent_agent_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1043,7 +1661,7 @@ func (x *HeartbeatRequest) String() string {
 func (*HeartbeatRequest) ProtoMessage() {}
 
 func (x *HeartbeatRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[9]
+	mi := &file_proto_agent_agent_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1056,7 +1674,7 @@ func (x *HeartbeatRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HeartbeatRequest.ProtoReflect.Descriptor instead.
 func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{9}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *HeartbeatRequest) GetAgentId() string {
@@ -1092,7 +1710,7 @@ type HeartbeatResponse struct {
 
 func (x *HeartbeatResponse) Reset() {
 	*x = HeartbeatResponse{}
-	mi := &file_proto_agent_proto_msgTypes[10]
+	mi := &file_proto_agent_agent_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1104,7 +1722,7 @@ func (x *HeartbeatResponse) String() string {
 func (*HeartbeatResponse) ProtoMessage() {}
 
 func (x *HeartbeatResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_proto_msgTypes[10]
+	mi := &file_proto_agent_agent_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1117,7 +1735,7 @@ func (x *HeartbeatResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HeartbeatResponse.ProtoReflect.Descriptor instead.
 func (*HeartbeatResponse) Descriptor() ([]byte, []int) {
-	return file_proto_agent_proto_rawDescGZIP(), []int{10}
+	return file_proto_agent_agent_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *HeartbeatResponse) GetAcknowledged() bool {
@@ -1141,11 +1759,11 @@ func (x *HeartbeatResponse) GetConfigUpdates() map[string]string {
 	return nil
 }
 
-var File_proto_agent_proto protoreflect.FileDescriptor
+var File_proto_agent_agent_proto protoreflect.FileDescriptor
 
-const file_proto_agent_proto_rawDesc = "" +
+const file_proto_agent_agent_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/agent.proto\x12\x05agent\"\xc6\x02\n" +
+	"\x17proto/agent/agent.proto\x12\x05agent\"\xc6\x02\n" +
 	"\x0fRegisterRequest\x12\x19\n" +
 	"\bagent_id\x18\x01 \x01(\tR\aagentId\x12\x1a\n" +
 	"\bhostname\x18\x02 \x01(\tR\bhostname\x12\x1d\n" +
@@ -1187,7 +1805,7 @@ const file_proto_agent_proto_rawDesc = "" +
 	"\x06stderr\x18\x05 \x01(\tR\x06stderr\x12\x1d\n" +
 	"\n" +
 	"started_at\x18\x06 \x01(\x03R\tstartedAt\x12!\n" +
-	"\fcompleted_at\x18\a \x01(\x03R\vcompletedAt\"\x93\x04\n" +
+	"\fcompleted_at\x18\a \x01(\x03R\vcompletedAt\"\xea\a\n" +
 	"\vMetricsData\x12\x19\n" +
 	"\bagent_id\x18\x01 \x01(\tR\aagentId\x12\x1c\n" +
 	"\ttimestamp\x18\x02 \x01(\x03R\ttimestamp\x12\x1f\n" +
@@ -1199,15 +1817,40 @@ const file_proto_agent_proto_rawDesc = "" +
 	"\vmemory_used\x18\x06 \x01(\x04R\n" +
 	"memoryUsed\x12)\n" +
 	"\x10memory_available\x18\a \x01(\x04R\x0fmemoryAvailable\x12%\n" +
-	"\x0ememory_percent\x18\b \x01(\x01R\rmemoryPercent\x12(\n" +
-	"\x05disks\x18\t \x03(\v2\x12.agent.DiskMetricsR\x05disks\x12,\n" +
+	"\x0ememory_percent\x18\b \x01(\x01R\rmemoryPercent\x12#\n" +
+	"\rmemory_cached\x18\x10 \x01(\x04R\fmemoryCached\x12%\n" +
+	"\x0ememory_buffers\x18\x11 \x01(\x04R\rmemoryBuffers\x12\x1d\n" +
+	"\n" +
+	"swap_total\x18\x12 \x01(\x04R\tswapTotal\x12\x1b\n" +
+	"\tswap_used\x18\x13 \x01(\x04R\bswapUsed\x12\x1b\n" +
+	"\tswap_free\x18\x14 \x01(\x04R\bswapFree\x12!\n" +
+	"\fswap_percent\x18\x15 \x01(\x01R\vswapPercent\x12(\n" +
+	"\x05disks\x18\t \x03(\v2\x12.agent.DiskMetricsR\x05disks\x12&\n" +
+	"\adisk_io\x18\x16 \x03(\v2\r.agent.DiskIOR\x06diskIo\x12,\n" +
 	"\x12network_bytes_sent\x18\n" +
 	" \x01(\x04R\x10networkBytesSent\x12,\n" +
-	"\x12network_bytes_recv\x18\v \x01(\x04R\x10networkBytesRecv\x12\x15\n" +
+	"\x12network_bytes_recv\x18\v \x01(\x04R\x10networkBytesRecv\x12 \n" +
+	"\vconnections\x18\x17 \x01(\x04R\vconnections\x12\x15\n" +
 	"\x06load_1\x18\f \x01(\x01R\x05load1\x12\x15\n" +
 	"\x06load_5\x18\r \x01(\x01R\x05load5\x12\x17\n" +
 	"\aload_15\x18\x0e \x01(\x01R\x06load15\x12%\n" +
-	"\x0euptime_seconds\x18\x0f \x01(\x04R\ruptimeSeconds\"\x9e\x01\n" +
+	"\x0euptime_seconds\x18\x0f \x01(\x04R\ruptimeSeconds\x12,\n" +
+	"\thost_info\x18\x18 \x01(\v2\x0f.agent.HostInfoR\bhostInfo\x12.\n" +
+	"\bservices\x18\x19 \x03(\v2\x12.agent.ServiceInfoR\bservices\x124\n" +
+	"\n" +
+	"containers\x18\x1a \x03(\v2\x14.agent.ContainerInfoR\n" +
+	"containers\x12/\n" +
+	"\bfirewall\x18\x1b \x01(\v2\x13.agent.FirewallInfoR\bfirewall\"Q\n" +
+	"\fFirewallInfo\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\x12)\n" +
+	"\x05rules\x18\x02 \x03(\v2\x13.agent.FirewallRuleR\x05rules\"\x96\x01\n" +
+	"\fFirewallRule\x12\x14\n" +
+	"\x05index\x18\x01 \x01(\tR\x05index\x12\x0e\n" +
+	"\x02to\x18\x02 \x01(\tR\x02to\x12\x16\n" +
+	"\x06action\x18\x03 \x01(\tR\x06action\x12\x12\n" +
+	"\x04from\x18\x04 \x01(\tR\x04from\x12\x18\n" +
+	"\acomment\x18\x05 \x01(\tR\acomment\x12\x1a\n" +
+	"\bprotocol\x18\x06 \x01(\tR\bprotocol\"\xa1\x02\n" +
 	"\vDiskMetrics\x12\x1f\n" +
 	"\vmount_point\x18\x01 \x01(\tR\n" +
 	"mountPoint\x12\x16\n" +
@@ -1215,7 +1858,50 @@ const file_proto_agent_proto_rawDesc = "" +
 	"\x05total\x18\x03 \x01(\x04R\x05total\x12\x12\n" +
 	"\x04used\x18\x04 \x01(\x04R\x04used\x12\x12\n" +
 	"\x04free\x18\x05 \x01(\x04R\x04free\x12\x18\n" +
-	"\apercent\x18\x06 \x01(\x01R\apercent\"(\n" +
+	"\apercent\x18\x06 \x01(\x01R\apercent\x12\x16\n" +
+	"\x06fstype\x18\a \x01(\tR\x06fstype\x12!\n" +
+	"\finodes_total\x18\b \x01(\x04R\vinodesTotal\x12\x1f\n" +
+	"\vinodes_used\x18\t \x01(\x04R\n" +
+	"inodesUsed\x12%\n" +
+	"\x0einodes_percent\x18\n" +
+	" \x01(\x01R\rinodesPercent\"\x9c\x01\n" +
+	"\x06DiskIO\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1d\n" +
+	"\n" +
+	"read_count\x18\x02 \x01(\x04R\treadCount\x12\x1f\n" +
+	"\vwrite_count\x18\x03 \x01(\x04R\n" +
+	"writeCount\x12\x1d\n" +
+	"\n" +
+	"read_bytes\x18\x04 \x01(\x04R\treadBytes\x12\x1f\n" +
+	"\vwrite_bytes\x18\x05 \x01(\x04R\n" +
+	"writeBytes\"\xf1\x02\n" +
+	"\bHostInfo\x12\x1a\n" +
+	"\bhostname\x18\x01 \x01(\tR\bhostname\x12\x0e\n" +
+	"\x02os\x18\x02 \x01(\tR\x02os\x12\x1a\n" +
+	"\bplatform\x18\x03 \x01(\tR\bplatform\x12'\n" +
+	"\x0fplatform_family\x18\x04 \x01(\tR\x0eplatformFamily\x12)\n" +
+	"\x10platform_version\x18\x05 \x01(\tR\x0fplatformVersion\x12%\n" +
+	"\x0ekernel_version\x18\x06 \x01(\tR\rkernelVersion\x12\x1f\n" +
+	"\vkernel_arch\x18\a \x01(\tR\n" +
+	"kernelArch\x12\x1b\n" +
+	"\tboot_time\x18\b \x01(\x04R\bbootTime\x123\n" +
+	"\x15virtualization_system\x18\t \x01(\tR\x14virtualizationSystem\x12/\n" +
+	"\x13virtualization_role\x18\n" +
+	" \x01(\tR\x12virtualizationRole\"x\n" +
+	"\vServiceInfo\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1a\n" +
+	"\brestarts\x18\x03 \x01(\x05R\brestarts\x12!\n" +
+	"\flast_restart\x18\x04 \x01(\tR\vlastRestart\"\xb4\x01\n" +
+	"\rContainerInfo\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
+	"\x05image\x18\x03 \x01(\tR\x05image\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x12\x16\n" +
+	"\x06health\x18\x05 \x01(\tR\x06health\x12\x1a\n" +
+	"\brestarts\x18\x06 \x01(\x05R\brestarts\x12\x1d\n" +
+	"\n" +
+	"started_at\x18\a \x01(\tR\tstartedAt\"(\n" +
 	"\n" +
 	"MetricsAck\x12\x1a\n" +
 	"\breceived\x18\x01 \x01(\bR\breceived\"\x94\x02\n" +
@@ -1279,20 +1965,20 @@ const file_proto_agent_proto_rawDesc = "" +
 	"\tHeartbeat\x12\x17.agent.HeartbeatRequest\x1a\x18.agent.HeartbeatResponseB3Z1github.com/budhilaw/malangpanel-agent/proto/agentb\x06proto3"
 
 var (
-	file_proto_agent_proto_rawDescOnce sync.Once
-	file_proto_agent_proto_rawDescData []byte
+	file_proto_agent_agent_proto_rawDescOnce sync.Once
+	file_proto_agent_agent_proto_rawDescData []byte
 )
 
-func file_proto_agent_proto_rawDescGZIP() []byte {
-	file_proto_agent_proto_rawDescOnce.Do(func() {
-		file_proto_agent_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_agent_proto_rawDesc), len(file_proto_agent_proto_rawDesc)))
+func file_proto_agent_agent_proto_rawDescGZIP() []byte {
+	file_proto_agent_agent_proto_rawDescOnce.Do(func() {
+		file_proto_agent_agent_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_agent_agent_proto_rawDesc), len(file_proto_agent_agent_proto_rawDesc)))
 	})
-	return file_proto_agent_proto_rawDescData
+	return file_proto_agent_agent_proto_rawDescData
 }
 
-var file_proto_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_proto_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
-var file_proto_agent_proto_goTypes = []any{
+var file_proto_agent_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_proto_agent_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
+var file_proto_agent_agent_proto_goTypes = []any{
 	(CommandType)(0),          // 0: agent.CommandType
 	(CommandStatus)(0),        // 1: agent.CommandStatus
 	(LogLevel)(0),             // 2: agent.LogLevel
@@ -1302,65 +1988,77 @@ var file_proto_agent_proto_goTypes = []any{
 	(*Command)(nil),           // 6: agent.Command
 	(*CommandResponse)(nil),   // 7: agent.CommandResponse
 	(*MetricsData)(nil),       // 8: agent.MetricsData
-	(*DiskMetrics)(nil),       // 9: agent.DiskMetrics
-	(*MetricsAck)(nil),        // 10: agent.MetricsAck
-	(*LogEntry)(nil),          // 11: agent.LogEntry
-	(*LogAck)(nil),            // 12: agent.LogAck
-	(*HeartbeatRequest)(nil),  // 13: agent.HeartbeatRequest
-	(*HeartbeatResponse)(nil), // 14: agent.HeartbeatResponse
-	nil,                       // 15: agent.RegisterRequest.LabelsEntry
-	nil,                       // 16: agent.Command.EnvEntry
-	nil,                       // 17: agent.LogEntry.MetadataEntry
-	nil,                       // 18: agent.HeartbeatResponse.ConfigUpdatesEntry
+	(*FirewallInfo)(nil),      // 9: agent.FirewallInfo
+	(*FirewallRule)(nil),      // 10: agent.FirewallRule
+	(*DiskMetrics)(nil),       // 11: agent.DiskMetrics
+	(*DiskIO)(nil),            // 12: agent.DiskIO
+	(*HostInfo)(nil),          // 13: agent.HostInfo
+	(*ServiceInfo)(nil),       // 14: agent.ServiceInfo
+	(*ContainerInfo)(nil),     // 15: agent.ContainerInfo
+	(*MetricsAck)(nil),        // 16: agent.MetricsAck
+	(*LogEntry)(nil),          // 17: agent.LogEntry
+	(*LogAck)(nil),            // 18: agent.LogAck
+	(*HeartbeatRequest)(nil),  // 19: agent.HeartbeatRequest
+	(*HeartbeatResponse)(nil), // 20: agent.HeartbeatResponse
+	nil,                       // 21: agent.RegisterRequest.LabelsEntry
+	nil,                       // 22: agent.Command.EnvEntry
+	nil,                       // 23: agent.LogEntry.MetadataEntry
+	nil,                       // 24: agent.HeartbeatResponse.ConfigUpdatesEntry
 }
-var file_proto_agent_proto_depIdxs = []int32{
-	15, // 0: agent.RegisterRequest.labels:type_name -> agent.RegisterRequest.LabelsEntry
+var file_proto_agent_agent_proto_depIdxs = []int32{
+	21, // 0: agent.RegisterRequest.labels:type_name -> agent.RegisterRequest.LabelsEntry
 	0,  // 1: agent.Command.type:type_name -> agent.CommandType
-	16, // 2: agent.Command.env:type_name -> agent.Command.EnvEntry
+	22, // 2: agent.Command.env:type_name -> agent.Command.EnvEntry
 	1,  // 3: agent.CommandResponse.status:type_name -> agent.CommandStatus
-	9,  // 4: agent.MetricsData.disks:type_name -> agent.DiskMetrics
-	2,  // 5: agent.LogEntry.level:type_name -> agent.LogLevel
-	17, // 6: agent.LogEntry.metadata:type_name -> agent.LogEntry.MetadataEntry
-	3,  // 7: agent.HeartbeatRequest.status:type_name -> agent.AgentStatus
-	18, // 8: agent.HeartbeatResponse.config_updates:type_name -> agent.HeartbeatResponse.ConfigUpdatesEntry
-	4,  // 9: agent.AgentService.Register:input_type -> agent.RegisterRequest
-	7,  // 10: agent.AgentService.CommandStream:input_type -> agent.CommandResponse
-	8,  // 11: agent.AgentService.StreamMetrics:input_type -> agent.MetricsData
-	11, // 12: agent.AgentService.StreamLogs:input_type -> agent.LogEntry
-	13, // 13: agent.AgentService.Heartbeat:input_type -> agent.HeartbeatRequest
-	5,  // 14: agent.AgentService.Register:output_type -> agent.RegisterResponse
-	6,  // 15: agent.AgentService.CommandStream:output_type -> agent.Command
-	10, // 16: agent.AgentService.StreamMetrics:output_type -> agent.MetricsAck
-	12, // 17: agent.AgentService.StreamLogs:output_type -> agent.LogAck
-	14, // 18: agent.AgentService.Heartbeat:output_type -> agent.HeartbeatResponse
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	11, // 4: agent.MetricsData.disks:type_name -> agent.DiskMetrics
+	12, // 5: agent.MetricsData.disk_io:type_name -> agent.DiskIO
+	13, // 6: agent.MetricsData.host_info:type_name -> agent.HostInfo
+	14, // 7: agent.MetricsData.services:type_name -> agent.ServiceInfo
+	15, // 8: agent.MetricsData.containers:type_name -> agent.ContainerInfo
+	9,  // 9: agent.MetricsData.firewall:type_name -> agent.FirewallInfo
+	10, // 10: agent.FirewallInfo.rules:type_name -> agent.FirewallRule
+	2,  // 11: agent.LogEntry.level:type_name -> agent.LogLevel
+	23, // 12: agent.LogEntry.metadata:type_name -> agent.LogEntry.MetadataEntry
+	3,  // 13: agent.HeartbeatRequest.status:type_name -> agent.AgentStatus
+	24, // 14: agent.HeartbeatResponse.config_updates:type_name -> agent.HeartbeatResponse.ConfigUpdatesEntry
+	4,  // 15: agent.AgentService.Register:input_type -> agent.RegisterRequest
+	7,  // 16: agent.AgentService.CommandStream:input_type -> agent.CommandResponse
+	8,  // 17: agent.AgentService.StreamMetrics:input_type -> agent.MetricsData
+	17, // 18: agent.AgentService.StreamLogs:input_type -> agent.LogEntry
+	19, // 19: agent.AgentService.Heartbeat:input_type -> agent.HeartbeatRequest
+	5,  // 20: agent.AgentService.Register:output_type -> agent.RegisterResponse
+	6,  // 21: agent.AgentService.CommandStream:output_type -> agent.Command
+	16, // 22: agent.AgentService.StreamMetrics:output_type -> agent.MetricsAck
+	18, // 23: agent.AgentService.StreamLogs:output_type -> agent.LogAck
+	20, // 24: agent.AgentService.Heartbeat:output_type -> agent.HeartbeatResponse
+	20, // [20:25] is the sub-list for method output_type
+	15, // [15:20] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
-func init() { file_proto_agent_proto_init() }
-func file_proto_agent_proto_init() {
-	if File_proto_agent_proto != nil {
+func init() { file_proto_agent_agent_proto_init() }
+func file_proto_agent_agent_proto_init() {
+	if File_proto_agent_agent_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_agent_proto_rawDesc), len(file_proto_agent_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_agent_agent_proto_rawDesc), len(file_proto_agent_agent_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   15,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_agent_proto_goTypes,
-		DependencyIndexes: file_proto_agent_proto_depIdxs,
-		EnumInfos:         file_proto_agent_proto_enumTypes,
-		MessageInfos:      file_proto_agent_proto_msgTypes,
+		GoTypes:           file_proto_agent_agent_proto_goTypes,
+		DependencyIndexes: file_proto_agent_agent_proto_depIdxs,
+		EnumInfos:         file_proto_agent_agent_proto_enumTypes,
+		MessageInfos:      file_proto_agent_agent_proto_msgTypes,
 	}.Build()
-	File_proto_agent_proto = out.File
-	file_proto_agent_proto_goTypes = nil
-	file_proto_agent_proto_depIdxs = nil
+	File_proto_agent_agent_proto = out.File
+	file_proto_agent_agent_proto_goTypes = nil
+	file_proto_agent_agent_proto_depIdxs = nil
 }

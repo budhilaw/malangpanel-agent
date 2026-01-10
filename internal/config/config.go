@@ -20,6 +20,7 @@ type Config struct {
 
 type AgentConfig struct {
 	ID     string            `yaml:"id"`
+	Token  string            `yaml:"token"` // Auth token
 	Name   string            `yaml:"name"`
 	Labels map[string]string `yaml:"labels"`
 }

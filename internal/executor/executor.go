@@ -47,10 +47,14 @@ func New(shell string, defaultTimeout time.Duration, allowed, blocked []string) 
 
 // Execute runs a command and returns the result
 func (e *Executor) Execute(ctx context.Context, command string, args []string, env map[string]string, timeout time.Duration) (*Result, error) {
-	// Build full command
+	// Build full command with quoted args
 	fullCmd := command
 	if len(args) > 0 {
-		fullCmd = command + " " + strings.Join(args, " ")
+		quotedArgs := make([]string, len(args))
+		for i, arg := range args {
+			quotedArgs[i] = e.quoteArg(arg)
+		}
+		fullCmd = command + " " + strings.Join(quotedArgs, " ")
 	}
 
 	// Check if command is blocked
@@ -112,10 +116,14 @@ func (e *Executor) Execute(ctx context.Context, command string, args []string, e
 
 // ExecuteStream runs a command and streams output in real-time
 func (e *Executor) ExecuteStream(ctx context.Context, command string, args []string, env map[string]string, timeout time.Duration, writer StreamWriter) (*Result, error) {
-	// Build full command
+	// Build full command with quoted args
 	fullCmd := command
 	if len(args) > 0 {
-		fullCmd = command + " " + strings.Join(args, " ")
+		quotedArgs := make([]string, len(args))
+		for i, arg := range args {
+			quotedArgs[i] = e.quoteArg(arg)
+		}
+		fullCmd = command + " " + strings.Join(quotedArgs, " ")
 	}
 
 	// Check if command is blocked
@@ -229,4 +237,9 @@ func (e *Executor) isAllowed(cmd string) bool {
 		}
 	}
 	return false
+}
+
+// quoteArg quotes an argument for shell execution
+func (e *Executor) quoteArg(arg string) string {
+	return "'" + strings.ReplaceAll(arg, "'", "'\\''") + "'"
 }

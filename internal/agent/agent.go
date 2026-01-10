@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 )
 
 // Agent is the main agent struct
@@ -101,7 +102,7 @@ func (a *Agent) Run(ctx context.Context) error {
 
 		// Connection closed, reconnect
 		if a.conn != nil {
-			a.conn.Close()
+			_ = a.conn.Close()
 			a.conn = nil
 		}
 
@@ -127,8 +128,8 @@ func (a *Agent) connect(ctx context.Context) error {
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
-	// Connect
-	conn, err := grpc.DialContext(ctx, a.cfg.ControlPlane.Address, opts...)
+	// Connect using NewClient (replaces deprecated DialContext)
+	conn, err := grpc.NewClient(a.cfg.ControlPlane.Address, opts...)
 	if err != nil {
 		return fmt.Errorf("failed to connect: %w", err)
 	}
@@ -138,6 +139,12 @@ func (a *Agent) connect(ctx context.Context) error {
 
 	// Create gRPC client
 	client := pb.NewAgentServiceClient(conn)
+
+	// Add auth metadata
+	ctxWithAuth := ctx
+	if a.cfg.Agent.Token != "" {
+		ctxWithAuth = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+a.cfg.Agent.Token)
+	}
 
 	// Get system info for registration
 	sysInfo, _ := a.monitor.GetSystemInfo()
@@ -161,7 +168,7 @@ func (a *Agent) connect(ctx context.Context) error {
 		Labels:       a.cfg.Agent.Labels,
 	}
 
-	regResp, err := client.Register(ctx, regReq)
+	regResp, err := client.Register(ctxWithAuth, regReq)
 	if err != nil {
 		return fmt.Errorf("failed to register: %w", err)
 	}
@@ -182,7 +189,8 @@ func (a *Agent) connect(ctx context.Context) error {
 	commandCtx, cancelCommands := context.WithCancel(ctx)
 	defer cancelCommands()
 
-	go a.runCommandStream(commandCtx, client)
+	go a.runCommandStream(commandCtx, client, a.cfg.Agent.Token)
+	go a.runMetricsStream(commandCtx, client, a.cfg.Agent.Token)
 
 	// Heartbeat loop
 	heartbeatTicker := time.NewTicker(heartbeatInterval)
@@ -193,7 +201,7 @@ func (a *Agent) connect(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 		case <-heartbeatTicker.C:
-			_, err := client.Heartbeat(ctx, &pb.HeartbeatRequest{
+			_, err := client.Heartbeat(ctxWithAuth, &pb.HeartbeatRequest{
 				AgentId:   a.agentID,
 				Timestamp: time.Now().Unix(),
 			})
@@ -207,10 +215,16 @@ func (a *Agent) connect(ctx context.Context) error {
 }
 
 // runCommandStream handles bidirectional command streaming
-func (a *Agent) runCommandStream(ctx context.Context, client pb.AgentServiceClient) {
+func (a *Agent) runCommandStream(ctx context.Context, client pb.AgentServiceClient, token string) {
 	log.Println("Starting command stream...")
 
-	stream, err := client.CommandStream(ctx)
+	// Add auth metadata
+	ctxWithAuth := ctx
+	if token != "" {
+		ctxWithAuth = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
+	}
+
+	stream, err := client.CommandStream(ctxWithAuth)
 	if err != nil {
 		log.Printf("Failed to open command stream: %v", err)
 		return
@@ -249,10 +263,176 @@ func (a *Agent) runCommandStream(ctx context.Context, client pb.AgentServiceClie
 	}
 }
 
+// runMetricsStream handles metrics streaming
+func (a *Agent) runMetricsStream(ctx context.Context, client pb.AgentServiceClient, token string) {
+	log.Println("Starting metrics stream...")
+
+	// Add auth metadata
+	ctxWithAuth := ctx
+	if token != "" {
+		ctxWithAuth = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
+	}
+
+	stream, err := client.StreamMetrics(ctxWithAuth)
+	if err != nil {
+		log.Printf("Failed to open metrics stream: %v", err)
+		return
+	}
+
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			// Get system info using monitor
+			metrics, err := a.monitor.Collect()
+			if err != nil {
+				log.Printf("Failed to collect metrics: %v", err)
+				continue
+			}
+
+			// Convert disk metrics with filtering AND fstype
+			var diskMetrics []*pb.DiskMetrics
+			for _, d := range metrics.Disks {
+				// Filter out insignificant mounts (heuristic)
+				// Skip if total size is very small (< 10MB) - likely not a real disk
+				if d.Total < 10*1024*1024 {
+					continue
+				}
+
+				diskMetrics = append(diskMetrics, &pb.DiskMetrics{
+					MountPoint:    d.MountPoint,
+					Device:        d.Device,
+					Total:         d.Total,
+					Used:          d.Used,
+					Free:          d.Free,
+					Percent:       d.Percent,
+					Fstype:        d.Fstype,
+					InodesTotal:   d.InodesTotal,
+					InodesUsed:    d.InodesUsed,
+					InodesPercent: d.InodesPercent,
+				})
+			}
+
+			// Convert Disk I/O
+			var diskIO []*pb.DiskIO
+			for _, io := range metrics.DiskIO {
+				diskIO = append(diskIO, &pb.DiskIO{
+					Name:       io.Name,
+					ReadCount:  io.ReadCount,
+					WriteCount: io.WriteCount,
+					ReadBytes:  io.ReadBytes,
+					WriteBytes: io.WriteBytes,
+				})
+			}
+
+			// Host Info
+			var hostInfo *pb.HostInfo
+			if metrics.HostInfo != nil {
+				hostInfo = &pb.HostInfo{
+					Hostname:             metrics.HostInfo.Platform, // Misnomer in gopsutil?
+					Os:                   metrics.HostInfo.Platform, // Use Platform as OS name
+					Platform:             metrics.HostInfo.Platform,
+					PlatformFamily:       metrics.HostInfo.PlatformFamily,
+					PlatformVersion:      metrics.HostInfo.PlatformVersion,
+					KernelVersion:        metrics.HostInfo.KernelVersion,
+					KernelArch:           metrics.HostInfo.KernelArch,
+					VirtualizationSystem: metrics.HostInfo.VirtualizationSystem,
+					VirtualizationRole:   metrics.HostInfo.VirtualizationRole,
+					BootTime:             metrics.HostInfo.BootTime,
+				}
+			}
+
+			// Get Services
+			var pbServices []*pb.ServiceInfo
+			services := a.monitor.GetServices()
+			for _, s := range services {
+				pbServices = append(pbServices, &pb.ServiceInfo{
+					Name:        s.Name,
+					Status:      s.Status,
+					Restarts:    s.Restarts,
+					LastRestart: s.LastRestart,
+				})
+			}
+
+			// Get Containers
+			var pbContainers []*pb.ContainerInfo
+			containers := a.monitor.GetContainers()
+			for _, c := range containers {
+				pbContainers = append(pbContainers, &pb.ContainerInfo{
+					Id:        c.ID,
+					Name:      c.Name,
+					Image:     c.Image,
+					Status:    c.Status,
+					Health:    c.Health,
+					Restarts:  c.Restarts,
+					StartedAt: c.StartedAt,
+				})
+			}
+
+			// Get Firewall
+			fwInfo := a.monitor.GetFirewall()
+			var pbRules []*pb.FirewallRule
+			for _, r := range fwInfo.Rules {
+				pbRules = append(pbRules, &pb.FirewallRule{
+					Index:    r.Index,
+					To:       r.To,
+					Action:   r.Action,
+					From:     r.From,
+					Protocol: r.Protocol,
+					Comment:  r.Comment,
+				})
+			}
+			pbFirewall := &pb.FirewallInfo{
+				Status: fwInfo.Status,
+				Rules:  pbRules,
+			}
+
+			pbMetrics := &pb.MetricsData{
+				AgentId:          a.agentID,
+				Timestamp:        time.Now().Unix(),
+				CpuPercent:       metrics.CPUPercent,
+				CpuPerCore:       metrics.CPUPerCore,
+				MemoryTotal:      metrics.MemoryTotal,
+				MemoryUsed:       metrics.MemoryUsed,
+				MemoryAvailable:  metrics.MemoryAvailable,
+				MemoryPercent:    metrics.MemoryPercent,
+				MemoryCached:     metrics.MemoryCached,
+				MemoryBuffers:    metrics.MemoryBuffers,
+				SwapTotal:        metrics.SwapTotal,
+				SwapUsed:         metrics.SwapUsed,
+				SwapFree:         metrics.SwapFree,
+				SwapPercent:      metrics.SwapPercent,
+				Disks:            diskMetrics,
+				DiskIo:           diskIO,
+				NetworkBytesSent: metrics.NetworkBytesSent,
+				NetworkBytesRecv: metrics.NetworkBytesRecv,
+				Connections:      metrics.Connections,
+				Load_1:           metrics.Load1,
+				Load_5:           metrics.Load5,
+				Load_15:          metrics.Load15,
+				UptimeSeconds:    metrics.UptimeSeconds,
+				HostInfo:         hostInfo,
+				Services:         pbServices,
+				Containers:       pbContainers,
+				Firewall:         pbFirewall,
+			}
+
+			if err := stream.Send(pbMetrics); err != nil {
+				log.Printf("Failed to send metrics: %v", err)
+				return
+			}
+		}
+	}
+}
+
 // executeCommand runs a command and sends the response
 func (a *Agent) executeCommand(ctx context.Context, stream pb.AgentService_CommandStreamClient, cmd *pb.Command) {
 	// Send running status
-	stream.Send(&pb.CommandResponse{
+	_ = stream.Send(&pb.CommandResponse{
 		CommandId: cmd.Id,
 		Status:    pb.CommandStatus_COMMAND_STATUS_RUNNING,
 	})
@@ -280,6 +460,60 @@ func (a *Agent) executeCommand(ctx context.Context, stream pb.AgentService_Comma
 			}
 		}
 		result, execErr = a.executor.Execute(execCtx, cmdStr, nil, nil, timeout)
+
+	case pb.CommandType_COMMAND_TYPE_DOCKER:
+		// Execute docker command
+		// e.g. args=["ps", "-a"] -> "docker ps -a"
+		result, execErr = a.executor.Execute(execCtx, "docker", cmd.Args, nil, timeout)
+
+	case pb.CommandType_COMMAND_TYPE_SERVICE:
+		// Execute systemctl command
+		// e.g. args=["status", "nginx"] -> "systemctl status nginx"
+		result, execErr = a.executor.Execute(execCtx, "systemctl", cmd.Args, nil, timeout)
+
+	case pb.CommandType_COMMAND_TYPE_INSTALL:
+		// Try to detect package manager (simple heuristic)
+		// This is a naive implementation, real world would need better OS detection
+		pkgManager := "apt-get"
+		if _, err := os.Stat("/usr/bin/yum"); err == nil {
+			pkgManager = "yum"
+		} else if _, err := os.Stat("/usr/bin/dnf"); err == nil {
+			pkgManager = "dnf"
+		} else if _, err := os.Stat("/sbin/apk"); err == nil {
+			pkgManager = "apk"
+		}
+
+		// Prepend non-interactive flags if needed
+		args := cmd.Args
+		switch pkgManager {
+		case "apt-get":
+			args = append([]string{"-y"}, args...)
+		case "yum", "dnf":
+			args = append([]string{"-y"}, args...)
+		}
+
+		result, execErr = a.executor.Execute(execCtx, pkgManager, args, nil, timeout)
+
+	case pb.CommandType_COMMAND_TYPE_FILE:
+		// args[0] = operation (cat, ls, rm)
+		// args[1] = path
+		if len(cmd.Args) < 2 {
+			execErr = fmt.Errorf("file command requires operation and path")
+			break
+		}
+		op := cmd.Args[0]
+		path := cmd.Args[1]
+
+		switch op {
+		case "cat", "read":
+			result, execErr = a.executor.Execute(execCtx, "cat", []string{path}, nil, timeout)
+		case "ls", "list":
+			result, execErr = a.executor.Execute(execCtx, "ls", []string{"-la", path}, nil, timeout)
+		case "rm", "delete":
+			result, execErr = a.executor.Execute(execCtx, "rm", []string{"-rf", path}, nil, timeout)
+		default:
+			execErr = fmt.Errorf("unknown file operation: %s", op)
+		}
 
 	default:
 		result = &executor.Result{

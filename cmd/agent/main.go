@@ -22,6 +22,8 @@ var (
 func main() {
 	// Parse flags
 	configPath := flag.String("config", "/etc/malangpanel/agent.yaml", "Path to configuration file")
+	flagToken := flag.String("token", "", "Authentication token")
+	flagID := flag.String("id", "", "Agent ID override")
 	showVersion := flag.Bool("version", false, "Show version and exit")
 	flag.Parse()
 
@@ -34,6 +36,14 @@ func main() {
 	cfg, err := config.Load(*configPath)
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
+	// Override config with flags
+	if *flagToken != "" {
+		cfg.Agent.Token = *flagToken
+	}
+	if *flagID != "" {
+		cfg.Agent.ID = *flagID
 	}
 
 	// Setup logging
