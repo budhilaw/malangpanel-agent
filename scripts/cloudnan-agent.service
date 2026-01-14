@@ -1,6 +1,6 @@
 [Unit]
-Description=Malang Panel Agent
-Documentation=https://github.com/budhilaw/malangpanel
+Description=Cloudnan Agent
+Documentation=https://github.com/budhilaw/cloudnan
 After=network-online.target
 Wants=network-online.target
 
@@ -10,10 +10,10 @@ User=root
 Group=root
 
 # Configuration
-Environment=MALANGPANEL_AGENT_CONFIG=/etc/malangpanel/agent.yaml
+Environment=CLOUDNAN_AGENT_CONFIG=/etc/cloudnan/agent.yaml
 
 # Binary
-ExecStart=/usr/local/bin/malangpanel-agent --config ${MALANGPANEL_AGENT_CONFIG}
+ExecStart=/usr/local/bin/cloudnan-agent --config ${CLOUDNAN_AGENT_CONFIG}
 
 # Restart policy
 Restart=always
@@ -29,7 +29,7 @@ ProtectHome=false
 # Logging
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=malangpanel-agent
+SyslogIdentifier=cloudnan-agent
 
 # Resource limits
 LimitNOFILE=65536

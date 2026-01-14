@@ -106,7 +106,7 @@ func (kp *KeyPair) GenerateCSR(agentID, agentName string) ([]byte, error) {
 	template := &x509.CertificateRequest{
 		Subject: pkix.Name{
 			CommonName:   fmt.Sprintf("agent-%s", agentID),
-			Organization: []string{"Malang Panel Agent"},
+			Organization: []string{"Cloudnan Agent"},
 		},
 		SignatureAlgorithm: x509.ECDSAWithSHA256,
 	}

@@ -1,4 +1,4 @@
-BINARY_NAME=malangpanel-agent
+BINARY_NAME=cloudnan-agent
 VERSION?=0.1.0
 BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 LDFLAGS=-ldflags "-X main.version=${VERSION} -X main.buildTime=${BUILD_TIME}"
@@ -54,26 +54,26 @@ clean:
 install: build-linux
 	sudo cp bin/$(BINARY_NAME)-linux-amd64 /usr/local/bin/$(BINARY_NAME)
 	sudo chmod +x /usr/local/bin/$(BINARY_NAME)
-	sudo mkdir -p /etc/malangpanel
-	sudo cp config.example.yaml /etc/malangpanel/agent.yaml
+	sudo mkdir -p /etc/cloudnan
+	sudo cp config.example.yaml /etc/cloudnan/agent.yaml
 
 # Install systemd service
 install-service:
-	sudo cp scripts/malangpanel-agent.service /etc/systemd/system/
+	sudo cp scripts/cloudnan-agent.service /etc/systemd/system/
 	sudo systemctl daemon-reload
-	sudo systemctl enable malangpanel-agent
+	sudo systemctl enable cloudnan-agent
 
 # Start service
 start:
-	sudo systemctl start malangpanel-agent
+	sudo systemctl start cloudnan-agent
 
 # Stop service
 stop:
-	sudo systemctl stop malangpanel-agent
+	sudo systemctl stop cloudnan-agent
 
 # View logs
 logs:
-	sudo journalctl -u malangpanel-agent -f
+	sudo journalctl -u cloudnan-agent -f
 
 # Development run
 dev:

@@ -160,7 +160,7 @@ func CreateDefault() *Config {
 		Logging: LoggingConfig{
 			Level:                "info",
 			Format:               "text",
-			File:                 "/var/log/malangpanel-agent.log",
+			File:                 "/var/log/cloudnan-agent.log",
 			StreamToControlPlane: true,
 		},
 		Executor: ExecutorConfig{

@@ -28,7 +28,7 @@ type KeyEntry struct {
 // NewAuthorizedKeysManager creates a new manager
 func NewAuthorizedKeysManager(backupDir string) *AuthorizedKeysManager {
 	if backupDir == "" {
-		backupDir = "/var/backups/malangpanel/ssh"
+		backupDir = "/var/backups/cloudnan/ssh"
 	}
 	return &AuthorizedKeysManager{backupDir: backupDir}
 }
@@ -101,7 +101,7 @@ func (m *AuthorizedKeysManager) SyncKeys(keys []KeyEntry, targetUser string, rep
 			parts := strings.Fields(keyLine)
 			if len(parts) >= 2 {
 				// Append name as comment if not present
-				keyLine = fmt.Sprintf("%s # managed-by-malangpanel id=%s name=%s", keyLine, key.ID, key.Name)
+				keyLine = fmt.Sprintf("%s # managed-by-cloudnan id=%s name=%s", keyLine, key.ID, key.Name)
 			}
 		}
 
@@ -117,7 +117,7 @@ func (m *AuthorizedKeysManager) SyncKeys(keys []KeyEntry, targetUser string, rep
 	return keyCount, backupPath, nil
 }
 
-// readExistingKeys reads existing keys that are NOT managed by malangpanel
+// readExistingKeys reads existing keys that are NOT managed by cloudnan
 func (m *AuthorizedKeysManager) readExistingKeys(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -129,8 +129,8 @@ func (m *AuthorizedKeysManager) readExistingKeys(path string) ([]string, error) 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		// Skip empty lines and malangpanel-managed keys
-		if line == "" || strings.Contains(line, "managed-by-malangpanel") {
+		// Skip empty lines and cloudnan-managed keys
+		if line == "" || strings.Contains(line, "managed-by-cloudnan") {
 			continue
 		}
 		lines = append(lines, line)

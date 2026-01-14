@@ -14,7 +14,7 @@ agent:
 # Control Plane connection
 control_plane:
   # gRPC endpoint of Control Plane
-  address: "control.malangpanel.io:9443"
+  address: "control.cloudnan.com:9443"
   
   # Connection timeout
   timeout: 30s
@@ -29,13 +29,13 @@ tls:
   enabled: true
   
   # Path to CA certificate
-  ca_cert: "/etc/malangpanel/certs/ca.crt"
+  ca_cert: "/etc/cloudnan/certs/ca.crt"
   
   # Path to agent certificate
-  cert: "/etc/malangpanel/certs/agent.crt"
+  cert: "/etc/cloudnan/certs/agent.crt"
   
   # Path to agent private key
-  key: "/etc/malangpanel/certs/agent.key"
+  key: "/etc/cloudnan/certs/agent.key"
   
   # Skip server certificate verification (NOT recommended for production)
   insecure_skip_verify: false
@@ -65,7 +65,7 @@ logging:
   format: "text"
   
   # Log file (empty = stdout)
-  file: "/var/log/malangpanel-agent.log"
+  file: "/var/log/cloudnan-agent.log"
   
   # Enable log streaming to Control Plane
   stream_to_control_plane: true

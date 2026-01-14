@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/budhilaw/malangpanel-agent/internal/agent"
-	"github.com/budhilaw/malangpanel-agent/internal/config"
-	"github.com/budhilaw/malangpanel-agent/internal/pki"
+	"github.com/budhilaw/cloudnan-agent/internal/agent"
+	"github.com/budhilaw/cloudnan-agent/internal/config"
+	"github.com/budhilaw/cloudnan-agent/internal/pki"
 )
 
 var (
@@ -22,7 +22,7 @@ var (
 
 func main() {
 	// Parse flags
-	configPath := flag.String("config", "/etc/malangpanel/agent.yaml", "Path to configuration file")
+	configPath := flag.String("config", "/etc/cloudnan/agent.yaml", "Path to configuration file")
 	flagToken := flag.String("token", "", "Authentication token (for initial registration)")
 	flagID := flag.String("id", "", "Agent ID")
 	flagPanel := flag.String("panel", "", "Panel URL (e.g., https://panel.example.com)")
@@ -30,7 +30,7 @@ func main() {
 	flag.Parse()
 
 	if *showVersion {
-		fmt.Printf("malangpanel-agent %s (built %s)\n", version, buildTime)
+		fmt.Printf("cloudnan-agent %s (built %s)\n", version, buildTime)
 		os.Exit(0)
 	}
 
@@ -52,7 +52,7 @@ func main() {
 	}
 
 	// PKI paths
-	pkiDir := "/etc/malangpanel/pki"
+	pkiDir := "/etc/cloudnan/pki"
 	certPath := pkiDir + "/agent.crt"
 	keyPath := pkiDir + "/agent.key"
 	caCertPath := pkiDir + "/ca.crt"
@@ -143,7 +143,7 @@ func main() {
 	// Setup logging
 	setupLogging(cfg.Logging)
 
-	log.Printf("Starting Malang Panel Agent %s", version)
+	log.Printf("Starting Cloudnan Agent %s", version)
 	log.Printf("Control Plane: %s", cfg.ControlPlane.Address)
 
 	// Create agent

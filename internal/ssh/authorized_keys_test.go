@@ -41,7 +41,7 @@ func TestAuthorizedKeysManager_SyncKeys(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to read authorized_keys: %v", err)
 	}
-	if !strings.Contains(string(content), "ssh-ed25519 AAAA... test # managed-by-malangpanel") {
+	if !strings.Contains(string(content), "ssh-ed25519 AAAA... test # managed-by-cloudnan") {
 		t.Errorf("File content missing key: %s", string(content))
 	}
 
@@ -66,7 +66,7 @@ func TestAuthorizedKeysManager_SyncKeys(t *testing.T) {
 	// Wait, we passed only `newKeys`. `SyncKeys` logic:
 	// readExisting -> returns only non-managed keys.
 	// So it preserves "existingKey".
-	// It drops "key1" because it was managed-by-malangpanel but NOT in `newKeys`.
+	// It drops "key1" because it was managed-by-cloudnan but NOT in `newKeys`.
 	// So result should be: existingKey + key2.
 
 	content, err = os.ReadFile(authKeysPath)

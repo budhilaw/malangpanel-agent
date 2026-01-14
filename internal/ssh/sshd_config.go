@@ -32,7 +32,7 @@ func NewSSHDConfigManager(configPath, backupDir string) *SSHDConfigManager {
 		configPath = "/etc/ssh/sshd_config"
 	}
 	if backupDir == "" {
-		backupDir = "/var/backups/malangpanel/ssh"
+		backupDir = "/var/backups/cloudnan/ssh"
 	}
 	return &SSHDConfigManager{
 		configPath: configPath,
@@ -165,7 +165,7 @@ func (m *SSHDConfigManager) UpdateConfig(port *int, permitRootLogin, passwordAut
 
 	if len(additions) > 0 {
 		lines = append(lines, "")
-		lines = append(lines, "# Added by MalangPanel")
+		lines = append(lines, "# Added by Cloudnan")
 		lines = append(lines, additions...)
 	}
 

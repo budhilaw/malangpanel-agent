@@ -2484,7 +2484,7 @@ const file_proto_agent_agent_proto_rawDesc = "" +
 	"\rStreamMetrics\x12\x12.agent.MetricsData\x1a\x11.agent.MetricsAck(\x010\x01\x120\n" +
 	"\n" +
 	"StreamLogs\x12\x0f.agent.LogEntry\x1a\r.agent.LogAck(\x010\x01\x12>\n" +
-	"\tHeartbeat\x12\x17.agent.HeartbeatRequest\x1a\x18.agent.HeartbeatResponseB3Z1github.com/budhilaw/malangpanel-agent/proto/agentb\x06proto3"
+	"\tHeartbeat\x12\x17.agent.HeartbeatRequest\x1a\x18.agent.HeartbeatResponseB0Z.github.com/budhilaw/cloudnan-agent/proto/agentb\x06proto3"
 
 var (
 	file_proto_agent_agent_proto_rawDescOnce sync.Once

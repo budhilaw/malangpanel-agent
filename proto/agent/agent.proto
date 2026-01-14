@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package agent;
 
-option go_package = "github.com/budhilaw/malangpanel-agent/proto/agent";
+option go_package = "github.com/budhilaw/cloudnan-agent/proto/agent";
 
 // AgentService handles communication between Control Plane and Agent
 service AgentService {

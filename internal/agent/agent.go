@@ -13,12 +13,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/budhilaw/malangpanel-agent/internal/config"
-	"github.com/budhilaw/malangpanel-agent/internal/executor"
-	"github.com/budhilaw/malangpanel-agent/internal/filesystem"
-	"github.com/budhilaw/malangpanel-agent/internal/monitor"
-	"github.com/budhilaw/malangpanel-agent/internal/ssh"
-	pb "github.com/budhilaw/malangpanel-agent/proto/agent"
+	"github.com/budhilaw/cloudnan-agent/internal/config"
+	"github.com/budhilaw/cloudnan-agent/internal/executor"
+	"github.com/budhilaw/cloudnan-agent/internal/filesystem"
+	"github.com/budhilaw/cloudnan-agent/internal/monitor"
+	"github.com/budhilaw/cloudnan-agent/internal/ssh"
+	pb "github.com/budhilaw/cloudnan-agent/proto/agent"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
@@ -64,7 +64,7 @@ func New(cfg *config.Config) (*Agent, error) {
 	)
 
 	mon := monitor.New()
-	sshHandler := ssh.NewHandler("/var/backups/malangpanel/ssh")
+	sshHandler := ssh.NewHandler("/var/backups/cloudnan/ssh")
 	fsManager := filesystem.New("/")
 
 	return &Agent{

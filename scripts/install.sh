@@ -1,5 +1,5 @@
 #!/bin/bash
-# Malang Panel Agent Installation Script
+# Cloudnan Agent Installation Script
 # Usage: curl -sSL https://budhilaw.com/install.sh | sudo bash -s -- --token TOKEN --id ID --panel PANEL_URL
 # Uninstall: curl -sSL https://budhilaw.com/install.sh | sudo bash -s -- --uninstall
 
@@ -18,21 +18,22 @@ AGENT_ID=""
 PANEL_URL=""
 UNINSTALL=false
 INSTALL_DIR="/usr/local/bin"
-CONFIG_DIR="/etc/malangpanel"
-PKI_DIR="/etc/malangpanel/pki"
-LOG_FILE="/var/log/malangpanel-agent.log"
-SERVICE_NAME="malangpanel-agent"
+CONFIG_DIR="/etc/cloudnan"
+PKI_DIR="/etc/cloudnan/pki"
+LOG_FILE="/var/log/cloudnan-agent.log"
+SERVICE_NAME="cloudnan-agent"
 BINARY_URL=""
 
 # Print banner
 print_banner() {
     echo -e "${BLUE}"
-    echo "  __  __       _                   ____                  _ "
-    echo " |  \/  | __ _| | __ _ _ __   __ _|  _ \ __ _ _ __   ___| |"
-    echo " | |\/| |/ _\` | |/ _\` | '_ \ / _\` | |_) / _\` | '_ \ / _ \ |"
-    echo " | |  | | (_| | | (_| | | | | (_| |  __/ (_| | | | |  __/ |"
-    echo " |_|  |_|\__,_|_|\__,_|_| |_|\__, |_|   \__,_|_| |_|\___|_|"
-    echo "                            |___/                          "
+    echo "   _____ _                 _                   "
+    echo "  / ____| |               | |                  "
+    echo " | |    | | ___  _   _  __| |_ __   __ _ _ __  "
+    echo " | |    | |/ _ \| | | |/ _\` | '_ \ / _\` | '_ \ "
+    echo " | |____| | (_) | |_| | (_| | | | | (_| | | | |"
+    echo "  \_____|_|\___/ \__,_|\__,_|_| |_|\__,_|_| |_|"
+    echo ""
     echo -e "${NC}"
     echo -e "${GREEN}Agent Installation Script (with mTLS)${NC}"
     echo ""
@@ -127,10 +128,10 @@ detect_arch() {
     ARCH=$(uname -m)
     case $ARCH in
         x86_64)
-            BINARY_URL="https://budhilaw.com/malangpanel-agent-linux-amd64"
+            BINARY_URL="https://budhilaw.com/cloudnan-agent-linux-amd64"
             ;;
         aarch64|arm64)
-            BINARY_URL="https://budhilaw.com/malangpanel-agent-linux-arm64"
+            BINARY_URL="https://budhilaw.com/cloudnan-agent-linux-arm64"
             ;;
         *)
             print_error "Unsupported architecture: $ARCH"
@@ -178,7 +179,7 @@ create_systemd_service() {
     
     cat > "/etc/systemd/system/${SERVICE_NAME}.service" << EOF
 [Unit]
-Description=Malang Panel Agent
+Description=Cloudnan Agent
 After=network.target
 
 [Service]
@@ -221,7 +222,7 @@ start_service() {
 
 # Uninstall agent
 uninstall_agent() {
-    print_step "Uninstalling Malang Panel Agent..."
+    print_step "Uninstalling Cloudnan Agent..."
     
     # Stop and disable service
     if systemctl is-active --quiet "$SERVICE_NAME" 2>/dev/null; then
@@ -259,7 +260,7 @@ uninstall_agent() {
         rm -f "$LOG_FILE"
     fi
     
-    print_success "Malang Panel Agent uninstalled successfully"
+    print_success "Cloudnan Agent uninstalled successfully"
     echo ""
     echo "All agent files have been removed:"
     echo "  - Service: /etc/systemd/system/${SERVICE_NAME}.service"
