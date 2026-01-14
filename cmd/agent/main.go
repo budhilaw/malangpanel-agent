@@ -24,6 +24,7 @@ func main() {
 	configPath := flag.String("config", "/etc/malangpanel/agent.yaml", "Path to configuration file")
 	flagToken := flag.String("token", "", "Authentication token")
 	flagID := flag.String("id", "", "Agent ID override")
+	flagServer := flag.String("server", "", "Control plane server address (e.g., panel.example.com:9443)")
 	showVersion := flag.Bool("version", false, "Show version and exit")
 	flag.Parse()
 
@@ -32,18 +33,35 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Load configuration
-	cfg, err := config.Load(*configPath)
+	// Load configuration (or create default if not exists)
+	cfg, err := config.LoadOrCreate(*configPath)
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
 
 	// Override config with flags
+	configModified := false
 	if *flagToken != "" {
 		cfg.Agent.Token = *flagToken
+		configModified = true
 	}
 	if *flagID != "" {
 		cfg.Agent.ID = *flagID
+		configModified = true
+	}
+	if *flagServer != "" {
+		cfg.ControlPlane.Address = *flagServer
+		configModified = true
+	}
+
+	// If config was modified by flags and doesn't exist on disk, save it
+	if configModified {
+		if _, err := os.Stat(*configPath); os.IsNotExist(err) {
+			log.Printf("Saving configuration to %s", *configPath)
+			if err := cfg.Save(*configPath); err != nil {
+				log.Printf("Warning: failed to save config: %v", err)
+			}
+		}
 	}
 
 	// Setup logging

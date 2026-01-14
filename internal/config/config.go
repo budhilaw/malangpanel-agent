@@ -109,3 +109,89 @@ func (c *Config) setDefaults() {
 		c.Executor.DefaultTimeout = 5 * time.Minute
 	}
 }
+
+// LoadOrCreate tries to load config from file, or creates a default one
+func LoadOrCreate(path string) (*Config, error) {
+	// Try to load existing config
+	if _, err := os.Stat(path); err == nil {
+		return Load(path)
+	}
+
+	// File doesn't exist, return a default config
+	cfg := CreateDefault()
+	return cfg, nil
+}
+
+// CreateDefault creates a config with sensible defaults
+func CreateDefault() *Config {
+	hostname, _ := os.Hostname()
+	if hostname == "" {
+		hostname = "agent"
+	}
+
+	cfg := &Config{
+		Agent: AgentConfig{
+			ID:     "",
+			Token:  "",
+			Name:   hostname,
+			Labels: map[string]string{},
+		},
+		ControlPlane: ControlPlaneConfig{
+			Address:              "localhost:9443",
+			Timeout:              30 * time.Second,
+			ReconnectInterval:    5 * time.Second,
+			MaxReconnectAttempts: 0,
+		},
+		TLS: TLSConfig{
+			Enabled:            false,
+			InsecureSkipVerify: true,
+		},
+		Metrics: MetricsConfig{
+			Enabled:  true,
+			Interval: 10 * time.Second,
+			Collect: MetricsCollect{
+				CPU:     true,
+				Memory:  true,
+				Disk:    true,
+				Network: true,
+				Load:    true,
+			},
+		},
+		Logging: LoggingConfig{
+			Level:                "info",
+			Format:               "text",
+			File:                 "/var/log/malangpanel-agent.log",
+			StreamToControlPlane: true,
+		},
+		Executor: ExecutorConfig{
+			Shell:           "/bin/bash",
+			DefaultTimeout:  5 * time.Minute,
+			AllowedCommands: []string{},
+			BlockedCommands: []string{"rm -rf /", "mkfs"},
+		},
+	}
+
+	return cfg
+}
+
+// Save writes the config to a file
+func (c *Config) Save(path string) error {
+	data, err := yaml.Marshal(c)
+	if err != nil {
+		return fmt.Errorf("failed to marshal config: %w", err)
+	}
+
+	// Create directory if not exists
+	dir := path[:len(path)-len("/agent.yaml")]
+	if dir != "" {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return fmt.Errorf("failed to create config directory: %w", err)
+		}
+	}
+
+	if err := os.WriteFile(path, data, 0644); err != nil {
+		return fmt.Errorf("failed to write config file: %w", err)
+	}
+
+	return nil
+}
