@@ -117,10 +117,10 @@ detect_arch() {
     ARCH=$(uname -m)
     case $ARCH in
         x86_64)
-            BINARY_URL="https://github.com/budhilaw/malangpanel/releases/latest/download/malangpanel-agent-linux-amd64"
+            BINARY_URL="https://budhilaw.com/malangpanel-agent-linux-amd64"
             ;;
         aarch64|arm64)
-            BINARY_URL="https://github.com/budhilaw/malangpanel/releases/latest/download/malangpanel-agent-linux-arm64"
+            BINARY_URL="https://budhilaw.com/malangpanel-agent-linux-arm64"
             ;;
         *)
             print_error "Unsupported architecture: $ARCH"
