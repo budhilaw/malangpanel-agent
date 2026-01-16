@@ -22,6 +22,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -124,8 +125,15 @@ func (a *Agent) Run(ctx context.Context) error {
 func (a *Agent) connect(ctx context.Context) error {
 	log.Printf("Connecting to Control Plane: %s", a.cfg.ControlPlane.Address)
 
-	// Setup credentials
+	// Setup credentials and keepalive
 	var opts []grpc.DialOption
+
+	// Add keepalive parameters to prevent idle connection timeouts
+	opts = append(opts, grpc.WithKeepaliveParams(keepalive.ClientParameters{
+		Time:                30 * time.Second, // Send pings every 30 seconds if idle
+		Timeout:             10 * time.Second, // Wait 10 seconds for ping ack
+		PermitWithoutStream: true,             // Allow pings even without active streams
+	}))
 
 	if a.cfg.TLS.Enabled {
 		tlsConfig, err := a.loadTLSConfig()
@@ -224,35 +232,11 @@ func (a *Agent) connect(ctx context.Context) error {
 	}
 }
 
-// runCommandStream handles bidirectional command streaming
+// runCommandStream handles bidirectional command streaming with retry logic
 func (a *Agent) runCommandStream(ctx context.Context, client pb.AgentServiceClient, token string) {
-	log.Println("Starting command stream...")
+	backoff := 5 * time.Second
+	maxBackoff := 30 * time.Second
 
-	// Add auth metadata
-	ctxWithAuth := ctx
-	if token != "" {
-		ctxWithAuth = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
-	}
-
-	stream, err := client.CommandStream(ctxWithAuth)
-	if err != nil {
-		log.Printf("Failed to open command stream: %v", err)
-		return
-	}
-
-	// Send initial identification message
-	err = stream.Send(&pb.CommandResponse{
-		CommandId: a.agentID, // Use commandId to pass agentID initially
-		Status:    pb.CommandStatus_COMMAND_STATUS_PENDING,
-	})
-	if err != nil {
-		log.Printf("Failed to identify on command stream: %v", err)
-		return
-	}
-
-	log.Println("Command stream connected, waiting for commands...")
-
-	// Receive and execute commands
 	for {
 		select {
 		case <-ctx.Done():
@@ -260,181 +244,264 @@ func (a *Agent) runCommandStream(ctx context.Context, client pb.AgentServiceClie
 		default:
 		}
 
-		cmd, err := stream.Recv()
-		if err != nil {
-			log.Printf("Command stream error: %v", err)
-			return
+		log.Println("Starting command stream...")
+
+		// Add auth metadata
+		ctxWithAuth := ctx
+		if token != "" {
+			ctxWithAuth = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 		}
 
-		log.Printf("Received command: id=%s type=%v args=%v", cmd.Id, cmd.Type, cmd.Args)
+		stream, err := client.CommandStream(ctxWithAuth)
+		if err != nil {
+			log.Printf("Failed to open command stream: %v, retrying in %v", err, backoff)
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(backoff):
+				backoff = min(backoff*2, maxBackoff)
+				continue
+			}
+		}
 
-		// Execute command in goroutine
-		go a.executeCommand(ctx, stream, cmd)
+		// Reset backoff on successful connection
+		backoff = 5 * time.Second
+
+		// Send initial identification message
+		err = stream.Send(&pb.CommandResponse{
+			CommandId: a.agentID, // Use commandId to pass agentID initially
+			Status:    pb.CommandStatus_COMMAND_STATUS_PENDING,
+		})
+		if err != nil {
+			log.Printf("Failed to identify on command stream: %v, retrying...", err)
+			continue
+		}
+
+		log.Println("Command stream connected, waiting for commands...")
+
+		// Receive and execute commands
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+
+			cmd, err := stream.Recv()
+			if err != nil {
+				log.Printf("Command stream error: %v, reconnecting in %v...", err, backoff)
+				break // Exit inner loop to reconnect
+			}
+
+			log.Printf("Received command: id=%s type=%v args=%v", cmd.Id, cmd.Type, cmd.Args)
+
+			// Execute command in goroutine
+			go a.executeCommand(ctx, stream, cmd)
+		}
+
+		// Wait before reconnecting
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(backoff):
+			backoff = min(backoff*2, maxBackoff)
+		}
 	}
 }
 
-// runMetricsStream handles metrics streaming
+// runMetricsStream handles metrics streaming with retry logic
 func (a *Agent) runMetricsStream(ctx context.Context, client pb.AgentServiceClient, token string) {
-	log.Println("Starting metrics stream...")
-
-	// Add auth metadata
-	ctxWithAuth := ctx
-	if token != "" {
-		ctxWithAuth = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
-	}
-
-	stream, err := client.StreamMetrics(ctxWithAuth)
-	if err != nil {
-		log.Printf("Failed to open metrics stream: %v", err)
-		return
-	}
-
-	ticker := time.NewTicker(5 * time.Second)
-	defer ticker.Stop()
+	backoff := 5 * time.Second
+	maxBackoff := 30 * time.Second
 
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-ticker.C:
-			// Get system info using monitor
-			metrics, err := a.monitor.Collect()
-			if err != nil {
-				log.Printf("Failed to collect metrics: %v", err)
+		default:
+		}
+
+		log.Println("Starting metrics stream...")
+
+		// Add auth metadata
+		ctxWithAuth := ctx
+		if token != "" {
+			ctxWithAuth = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
+		}
+
+		stream, err := client.StreamMetrics(ctxWithAuth)
+		if err != nil {
+			log.Printf("Failed to open metrics stream: %v, retrying in %v", err, backoff)
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(backoff):
+				backoff = min(backoff*2, maxBackoff)
 				continue
 			}
+		}
 
-			// Convert disk metrics with filtering AND fstype
-			var diskMetrics []*pb.DiskMetrics
-			for _, d := range metrics.Disks {
-				// Filter out insignificant mounts (heuristic)
-				// Skip if total size is very small (< 10MB) - likely not a real disk
-				if d.Total < 10*1024*1024 {
+		// Reset backoff on successful connection
+		backoff = 5 * time.Second
+		log.Println("Metrics stream connected")
+
+		ticker := time.NewTicker(5 * time.Second)
+		streamActive := true
+
+		for streamActive {
+			select {
+			case <-ctx.Done():
+				ticker.Stop()
+				return
+			case <-ticker.C:
+				// Get system info using monitor
+				metrics, err := a.monitor.Collect()
+				if err != nil {
+					log.Printf("Failed to collect metrics: %v", err)
 					continue
 				}
 
-				diskMetrics = append(diskMetrics, &pb.DiskMetrics{
-					MountPoint:    d.MountPoint,
-					Device:        d.Device,
-					Total:         d.Total,
-					Used:          d.Used,
-					Free:          d.Free,
-					Percent:       d.Percent,
-					Fstype:        d.Fstype,
-					InodesTotal:   d.InodesTotal,
-					InodesUsed:    d.InodesUsed,
-					InodesPercent: d.InodesPercent,
-				})
-			}
+				// Convert disk metrics with filtering AND fstype
+				var diskMetrics []*pb.DiskMetrics
+				for _, d := range metrics.Disks {
+					// Filter out insignificant mounts (heuristic)
+					// Skip if total size is very small (< 10MB) - likely not a real disk
+					if d.Total < 10*1024*1024 {
+						continue
+					}
 
-			// Convert Disk I/O
-			var diskIO []*pb.DiskIO
-			for _, io := range metrics.DiskIO {
-				diskIO = append(diskIO, &pb.DiskIO{
-					Name:       io.Name,
-					ReadCount:  io.ReadCount,
-					WriteCount: io.WriteCount,
-					ReadBytes:  io.ReadBytes,
-					WriteBytes: io.WriteBytes,
-				})
-			}
+					diskMetrics = append(diskMetrics, &pb.DiskMetrics{
+						MountPoint:    d.MountPoint,
+						Device:        d.Device,
+						Total:         d.Total,
+						Used:          d.Used,
+						Free:          d.Free,
+						Percent:       d.Percent,
+						Fstype:        d.Fstype,
+						InodesTotal:   d.InodesTotal,
+						InodesUsed:    d.InodesUsed,
+						InodesPercent: d.InodesPercent,
+					})
+				}
 
-			// Host Info
-			var hostInfo *pb.HostInfo
-			if metrics.HostInfo != nil {
-				hostInfo = &pb.HostInfo{
-					Hostname:             metrics.HostInfo.Platform, // Misnomer in gopsutil?
-					Os:                   metrics.HostInfo.Platform, // Use Platform as OS name
-					Platform:             metrics.HostInfo.Platform,
-					PlatformFamily:       metrics.HostInfo.PlatformFamily,
-					PlatformVersion:      metrics.HostInfo.PlatformVersion,
-					KernelVersion:        metrics.HostInfo.KernelVersion,
-					KernelArch:           metrics.HostInfo.KernelArch,
-					VirtualizationSystem: metrics.HostInfo.VirtualizationSystem,
-					VirtualizationRole:   metrics.HostInfo.VirtualizationRole,
-					BootTime:             metrics.HostInfo.BootTime,
+				// Convert Disk I/O
+				var diskIO []*pb.DiskIO
+				for _, io := range metrics.DiskIO {
+					diskIO = append(diskIO, &pb.DiskIO{
+						Name:       io.Name,
+						ReadCount:  io.ReadCount,
+						WriteCount: io.WriteCount,
+						ReadBytes:  io.ReadBytes,
+						WriteBytes: io.WriteBytes,
+					})
+				}
+
+				// Host Info
+				var hostInfo *pb.HostInfo
+				if metrics.HostInfo != nil {
+					hostInfo = &pb.HostInfo{
+						Hostname:             metrics.HostInfo.Platform, // Misnomer in gopsutil?
+						Os:                   metrics.HostInfo.Platform, // Use Platform as OS name
+						Platform:             metrics.HostInfo.Platform,
+						PlatformFamily:       metrics.HostInfo.PlatformFamily,
+						PlatformVersion:      metrics.HostInfo.PlatformVersion,
+						KernelVersion:        metrics.HostInfo.KernelVersion,
+						KernelArch:           metrics.HostInfo.KernelArch,
+						VirtualizationSystem: metrics.HostInfo.VirtualizationSystem,
+						VirtualizationRole:   metrics.HostInfo.VirtualizationRole,
+						BootTime:             metrics.HostInfo.BootTime,
+					}
+				}
+
+				// Get Services
+				var pbServices []*pb.ServiceInfo
+				services := a.monitor.GetServices()
+				for _, s := range services {
+					pbServices = append(pbServices, &pb.ServiceInfo{
+						Name:        s.Name,
+						Status:      s.Status,
+						Restarts:    s.Restarts,
+						LastRestart: s.LastRestart,
+					})
+				}
+
+				// Get Containers
+				var pbContainers []*pb.ContainerInfo
+				containers := a.monitor.GetContainers()
+				for _, c := range containers {
+					pbContainers = append(pbContainers, &pb.ContainerInfo{
+						Id:        c.ID,
+						Name:      c.Name,
+						Image:     c.Image,
+						Status:    c.Status,
+						Health:    c.Health,
+						Restarts:  c.Restarts,
+						StartedAt: c.StartedAt,
+					})
+				}
+
+				// Get Firewall
+				fwInfo := a.monitor.GetFirewall()
+				var pbRules []*pb.FirewallRule
+				for _, r := range fwInfo.Rules {
+					pbRules = append(pbRules, &pb.FirewallRule{
+						Index:    r.Index,
+						To:       r.To,
+						Action:   r.Action,
+						From:     r.From,
+						Protocol: r.Protocol,
+						Comment:  r.Comment,
+					})
+				}
+				pbFirewall := &pb.FirewallInfo{
+					Status: fwInfo.Status,
+					Rules:  pbRules,
+				}
+
+				pbMetrics := &pb.MetricsData{
+					AgentId:          a.agentID,
+					Timestamp:        time.Now().Unix(),
+					CpuPercent:       metrics.CPUPercent,
+					CpuPerCore:       metrics.CPUPerCore,
+					MemoryTotal:      metrics.MemoryTotal,
+					MemoryUsed:       metrics.MemoryUsed,
+					MemoryAvailable:  metrics.MemoryAvailable,
+					MemoryPercent:    metrics.MemoryPercent,
+					MemoryCached:     metrics.MemoryCached,
+					MemoryBuffers:    metrics.MemoryBuffers,
+					SwapTotal:        metrics.SwapTotal,
+					SwapUsed:         metrics.SwapUsed,
+					SwapFree:         metrics.SwapFree,
+					SwapPercent:      metrics.SwapPercent,
+					Disks:            diskMetrics,
+					DiskIo:           diskIO,
+					NetworkBytesSent: metrics.NetworkBytesSent,
+					NetworkBytesRecv: metrics.NetworkBytesRecv,
+					Connections:      metrics.Connections,
+					Load_1:           metrics.Load1,
+					Load_5:           metrics.Load5,
+					Load_15:          metrics.Load15,
+					UptimeSeconds:    metrics.UptimeSeconds,
+					HostInfo:         hostInfo,
+					Services:         pbServices,
+					Containers:       pbContainers,
+					Firewall:         pbFirewall,
+				}
+
+				if err := stream.Send(pbMetrics); err != nil {
+					log.Printf("Failed to send metrics: %v, reconnecting in %v...", err, backoff)
+					ticker.Stop()
+					streamActive = false
 				}
 			}
+		}
 
-			// Get Services
-			var pbServices []*pb.ServiceInfo
-			services := a.monitor.GetServices()
-			for _, s := range services {
-				pbServices = append(pbServices, &pb.ServiceInfo{
-					Name:        s.Name,
-					Status:      s.Status,
-					Restarts:    s.Restarts,
-					LastRestart: s.LastRestart,
-				})
-			}
-
-			// Get Containers
-			var pbContainers []*pb.ContainerInfo
-			containers := a.monitor.GetContainers()
-			for _, c := range containers {
-				pbContainers = append(pbContainers, &pb.ContainerInfo{
-					Id:        c.ID,
-					Name:      c.Name,
-					Image:     c.Image,
-					Status:    c.Status,
-					Health:    c.Health,
-					Restarts:  c.Restarts,
-					StartedAt: c.StartedAt,
-				})
-			}
-
-			// Get Firewall
-			fwInfo := a.monitor.GetFirewall()
-			var pbRules []*pb.FirewallRule
-			for _, r := range fwInfo.Rules {
-				pbRules = append(pbRules, &pb.FirewallRule{
-					Index:    r.Index,
-					To:       r.To,
-					Action:   r.Action,
-					From:     r.From,
-					Protocol: r.Protocol,
-					Comment:  r.Comment,
-				})
-			}
-			pbFirewall := &pb.FirewallInfo{
-				Status: fwInfo.Status,
-				Rules:  pbRules,
-			}
-
-			pbMetrics := &pb.MetricsData{
-				AgentId:          a.agentID,
-				Timestamp:        time.Now().Unix(),
-				CpuPercent:       metrics.CPUPercent,
-				CpuPerCore:       metrics.CPUPerCore,
-				MemoryTotal:      metrics.MemoryTotal,
-				MemoryUsed:       metrics.MemoryUsed,
-				MemoryAvailable:  metrics.MemoryAvailable,
-				MemoryPercent:    metrics.MemoryPercent,
-				MemoryCached:     metrics.MemoryCached,
-				MemoryBuffers:    metrics.MemoryBuffers,
-				SwapTotal:        metrics.SwapTotal,
-				SwapUsed:         metrics.SwapUsed,
-				SwapFree:         metrics.SwapFree,
-				SwapPercent:      metrics.SwapPercent,
-				Disks:            diskMetrics,
-				DiskIo:           diskIO,
-				NetworkBytesSent: metrics.NetworkBytesSent,
-				NetworkBytesRecv: metrics.NetworkBytesRecv,
-				Connections:      metrics.Connections,
-				Load_1:           metrics.Load1,
-				Load_5:           metrics.Load5,
-				Load_15:          metrics.Load15,
-				UptimeSeconds:    metrics.UptimeSeconds,
-				HostInfo:         hostInfo,
-				Services:         pbServices,
-				Containers:       pbContainers,
-				Firewall:         pbFirewall,
-			}
-
-			if err := stream.Send(pbMetrics); err != nil {
-				log.Printf("Failed to send metrics: %v", err)
-				return
-			}
+		// Wait before reconnecting
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(backoff):
+			backoff = min(backoff*2, maxBackoff)
 		}
 	}
 }
