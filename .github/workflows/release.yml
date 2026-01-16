@@ -1,0 +1,106 @@
+name: Release and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Prevent concurrent deployments
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, Release & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Get version from commit
+        id: version
+        run: |
+          # Get short commit hash
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          # Get commit count for version number
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          # Create version string
+          VERSION="v0.1.${COMMIT_COUNT}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "Building version: ${VERSION}"
+
+      - name: Build binaries
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir -p bin
+          # Build for Linux AMD64
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+            -ldflags "-X main.version=${VERSION} -X main.buildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            -o bin/cloudnan-agent-linux-amd64 ./cmd/agent
+          # Build for Linux ARM64
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build \
+            -ldflags "-X main.version=${VERSION} -X main.buildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            -o bin/cloudnan-agent-linux-arm64 ./cmd/agent
+          # Make executable
+          chmod +x bin/*
+          ls -la bin/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          body: |
+            Automated release from commit ${{ steps.version.outputs.short_sha }}
+            
+            ## Binaries
+            - `cloudnan-agent-linux-amd64` - For x86_64 Linux servers
+            - `cloudnan-agent-linux-arm64` - For ARM64 Linux servers (e.g., AWS Graviton, Raspberry Pi)
+            
+            ## Installation
+            ```bash
+            curl -sSL https://cloudnan.com/downloads/install.sh | sudo bash -s -- --token TOKEN --id ID --panel PANEL_URL
+            ```
+          files: |
+            bin/cloudnan-agent-linux-amd64
+            bin/cloudnan-agent-linux-arm64
+            scripts/install.sh
+          draft: false
+          prerelease: false
+
+      - name: Deploy to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: "bin/cloudnan-agent-linux-amd64,bin/cloudnan-agent-linux-arm64,scripts/install.sh"
+          target: "/home/kai/Projects/cloudnan"
+          strip_components: 1
+          overwrite: true
+
+      - name: Rename files on server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /home/kai/Projects/cloudnan
+            # Files are already in correct location from scp
+            chmod +x cloudnan-agent-linux-amd64 cloudnan-agent-linux-arm64 install.sh
+            ls -la
+            echo "Deployment complete!"
