@@ -147,7 +147,7 @@ func main() {
 	log.Printf("Control Plane: %s", cfg.ControlPlane.Address)
 
 	// Create agent
-	ag, err := agent.New(cfg)
+	ag, err := agent.New(cfg, version)
 	if err != nil {
 		log.Fatalf("Failed to create agent: %v", err)
 	}

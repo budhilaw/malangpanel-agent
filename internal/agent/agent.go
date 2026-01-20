@@ -41,10 +41,11 @@ type Agent struct {
 
 	mu      sync.RWMutex
 	running bool
+	version string
 }
 
 // New creates a new Agent
-func New(cfg *config.Config) (*Agent, error) {
+func New(cfg *config.Config, version string) (*Agent, error) {
 	// Get hostname
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -76,6 +77,7 @@ func New(cfg *config.Config) (*Agent, error) {
 		fsManager:  fsManager,
 		agentID:    agentID,
 		hostname:   hostname,
+		version:    version,
 	}, nil
 }
 
@@ -182,7 +184,7 @@ func (a *Agent) connect(ctx context.Context) error {
 		Os:           osInfo,
 		OsVersion:    osVersion,
 		Arch:         arch,
-		AgentVersion: "dev",
+		AgentVersion: a.version,
 		Labels:       a.cfg.Agent.Labels,
 	}
 
