@@ -324,8 +324,9 @@ UPGRADE_EOF
     
     print_step "Starting upgrade process..."
     
-    # Run the upgrade script in background, detached from this process
-    nohup "$UPGRADE_SCRIPT" > /var/log/cloudnan-upgrade.log 2>&1 &
+    # Use systemd-run to create a transient service that's completely independent
+    # --no-block returns immediately, the upgrade runs as a separate systemd unit
+    systemd-run --no-block --unit=cloudnan-upgrade "$UPGRADE_SCRIPT"
     
     print_success "Upgrade initiated! Agent will restart shortly."
     echo ""
