@@ -13,7 +13,7 @@ func TestAuthorizedKeysManager_SyncKeys(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	// Mock file paths
 	authKeysPath := filepath.Join(tmpDir, "authorized_keys")
@@ -57,7 +57,7 @@ func TestAuthorizedKeysManager_SyncKeys(t *testing.T) {
 	}
 
 	// Sync with replaceAll=false
-	count, _, err = manager.SyncKeys(newKeys, "root", false)
+	_, _, err = manager.SyncKeys(newKeys, "root", false)
 	if err != nil {
 		t.Fatalf("SyncKeys (append) failed: %v", err)
 	}

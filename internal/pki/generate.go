@@ -59,7 +59,7 @@ func (kp *KeyPair) SavePrivateKey(path string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create key file: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	if err := pem.Encode(file, pemBlock); err != nil {
 		return fmt.Errorf("failed to write private key: %w", err)

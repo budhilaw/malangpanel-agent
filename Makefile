@@ -45,6 +45,10 @@ build-all: build-linux
 test:
 	$(GOTEST) -v ./...
 
+# Run linter (requires golangci-lint)
+lint:
+	golangci-lint run
+
 # Clean build artifacts
 clean:
 	$(GOCLEAN)

@@ -167,7 +167,7 @@ func (m *Manager) Copy(source, dest string) error {
 	if err != nil {
 		return err
 	}
-	defer sourceFile.Close()
+	defer func() { _ = sourceFile.Close() }()
 
 	info, err := sourceFile.Stat()
 	if err != nil {
@@ -183,7 +183,7 @@ func (m *Manager) Copy(source, dest string) error {
 	if err != nil {
 		return err
 	}
-	defer destFile.Close()
+	defer func() { _ = destFile.Close() }()
 
 	if _, err := io.Copy(destFile, sourceFile); err != nil {
 		return err

@@ -53,7 +53,7 @@ func (c *RegistrationClient) GetAgentConfig() (*AgentConfig, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch agent config: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
@@ -91,7 +91,7 @@ func (c *RegistrationClient) RegisterCertificate(agentID, token string, csrPEM [
 	if err != nil {
 		return nil, fmt.Errorf("failed to register certificate: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(resp.Body)
@@ -134,7 +134,7 @@ func (c *RegistrationClient) RenewCertificate(agentID string, csrPEM []byte, cur
 	if err != nil {
 		return nil, fmt.Errorf("failed to renew certificate: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(resp.Body)

@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -291,6 +292,13 @@ func (a *Agent) runCommandStream(ctx context.Context, client pb.AgentServiceClie
 
 			cmd, err := stream.Recv()
 			if err != nil {
+				errStr := err.Error()
+				// If agent not registered, signal to re-register by calling Register again
+				if strings.Contains(errStr, "agent not registered") {
+					log.Printf("Agent not registered on panel, triggering re-registration...")
+					// Re-register with panel
+					a.reRegister(ctx, client, token)
+				}
 				log.Printf("Command stream error: %v, reconnecting in %v...", err, backoff)
 				break // Exit inner loop to reconnect
 			}
@@ -308,6 +316,48 @@ func (a *Agent) runCommandStream(ctx context.Context, client pb.AgentServiceClie
 		case <-time.After(backoff):
 			backoff = min(backoff*2, maxBackoff)
 		}
+	}
+}
+
+// reRegister re-registers the agent with the panel when connection is lost
+func (a *Agent) reRegister(ctx context.Context, client pb.AgentServiceClient, token string) {
+	// Add auth metadata
+	ctxWithAuth := ctx
+	if token != "" {
+		ctxWithAuth = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
+	}
+
+	// Get system info for registration
+	sysInfo, _ := a.monitor.GetSystemInfo()
+	osInfo := "linux"
+	osVersion := ""
+	arch := runtime.GOARCH
+	if sysInfo != nil {
+		osInfo = sysInfo.OS
+		osVersion = sysInfo.OSVersion
+		arch = sysInfo.Arch
+	}
+
+	regReq := &pb.RegisterRequest{
+		AgentId:      a.agentID,
+		Hostname:     a.hostname,
+		Os:           osInfo,
+		OsVersion:    osVersion,
+		Arch:         arch,
+		AgentVersion: a.version,
+		Labels:       a.cfg.Agent.Labels,
+	}
+
+	regResp, err := client.Register(ctxWithAuth, regReq)
+	if err != nil {
+		log.Printf("Re-registration failed: %v", err)
+		return
+	}
+
+	if regResp.Success {
+		log.Printf("Re-registered with panel successfully")
+	} else {
+		log.Printf("Re-registration failed: %s", regResp.Message)
 	}
 }
 

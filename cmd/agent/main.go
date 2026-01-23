@@ -81,7 +81,6 @@ func main() {
 		// Update control plane address from panel
 		if agentConfig.GRPCAddress != "" {
 			cfg.ControlPlane.Address = agentConfig.GRPCAddress
-			configModified = true
 		}
 
 		// Check if we need to register a certificate
