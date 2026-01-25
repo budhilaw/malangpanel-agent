@@ -175,7 +175,118 @@ func (m *SSHDConfigManager) UpdateConfig(port *int, permitRootLogin, passwordAut
 		return backupPath, fmt.Errorf("failed to write sshd_config: %w", err)
 	}
 
+	// Ensure Port is not duplicated in included config files
+	if port != nil {
+		if err := m.updatePortInIncludedFiles(*port); err != nil {
+			return backupPath, fmt.Errorf("failed to update port in included sshd configs: %w", err)
+		}
+	}
+
 	return backupPath, nil
+}
+
+// updatePortInIncludedFiles replaces any Port directives in included sshd config files
+func (m *SSHDConfigManager) updatePortInIncludedFiles(port int) error {
+	patterns, err := m.getIncludePatterns()
+	if err != nil {
+		return err
+	}
+	if len(patterns) == 0 {
+		return nil
+	}
+
+	for _, pattern := range patterns {
+		matches, err := filepath.Glob(pattern)
+		if err != nil {
+			return err
+		}
+		for _, path := range matches {
+			info, err := os.Stat(path)
+			if err != nil || info.IsDir() {
+				continue
+			}
+			if err := m.updatePortInFile(path, port); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// getIncludePatterns returns Include patterns from the main sshd_config
+func (m *SSHDConfigManager) getIncludePatterns() ([]string, error) {
+	content, err := os.ReadFile(m.configPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var patterns []string
+	for _, line := range strings.Split(string(content), "\n") {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
+			continue
+		}
+
+		parts := strings.Fields(trimmed)
+		if len(parts) < 2 {
+			continue
+		}
+
+		if strings.EqualFold(parts[0], "Include") {
+			for _, p := range parts[1:] {
+				pattern := p
+				if !filepath.IsAbs(pattern) {
+					pattern = filepath.Join(filepath.Dir(m.configPath), pattern)
+				}
+				patterns = append(patterns, pattern)
+			}
+		}
+	}
+
+	return patterns, nil
+}
+
+// updatePortInFile updates all Port directives in a single sshd config file
+func (m *SSHDConfigManager) updatePortInFile(path string, port int) error {
+	_, err := m.createBackupForPath(path)
+	if err != nil {
+		return err
+	}
+
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	lines := strings.Split(string(content), "\n")
+	updated := false
+
+	for i, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" {
+			continue
+		}
+		isCommented := strings.HasPrefix(trimmed, "#")
+		if isCommented {
+			trimmed = strings.TrimSpace(strings.TrimPrefix(trimmed, "#"))
+		}
+		parts := strings.Fields(trimmed)
+		if len(parts) < 1 {
+			continue
+		}
+		if strings.EqualFold(parts[0], "Port") {
+			lines[i] = fmt.Sprintf("Port %d", port)
+			updated = true
+		}
+	}
+
+	if !updated {
+		return nil
+	}
+
+	newContent := strings.Join(lines, "\n")
+	return os.WriteFile(path, []byte(newContent), 0644)
 }
 
 // ValidateConfig runs sshd -t to validate the configuration
@@ -269,6 +380,28 @@ func (m *SSHDConfigManager) createBackup() (string, error) {
 	backupPath := filepath.Join(m.backupDir, fmt.Sprintf("sshd_config.%s.bak", timestamp))
 
 	content, err := os.ReadFile(m.configPath)
+	if err != nil {
+		return "", err
+	}
+
+	if err := os.WriteFile(backupPath, content, 0600); err != nil {
+		return "", err
+	}
+
+	return backupPath, nil
+}
+
+// createBackupForPath creates a timestamped backup for a specific config file
+func (m *SSHDConfigManager) createBackupForPath(path string) (string, error) {
+	if err := os.MkdirAll(m.backupDir, 0700); err != nil {
+		return "", err
+	}
+
+	timestamp := time.Now().Format("20060102-150405")
+	base := filepath.Base(path)
+	backupPath := filepath.Join(m.backupDir, fmt.Sprintf("%s.%s.bak", base, timestamp))
+
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
 	}
